@@ -1,0 +1,231 @@
+================================================================================
+  deep-analysis-toolkit V3.5 — 功能架构与使用说明
+  版本：v3.5.0 | 更新日期：2026-08-02
+================================================================================
+
+一、版本概述
+--------------------------------------------------------------------------------
+深度分析工具箱 V3.5 是一套固定全流程分析引擎，从 V1 实战缺陷中重构而来。
+核心原则：尽最大努力，不留余力。确保广度、深度、前瞻性。
+
+二、核心功能
+--------------------------------------------------------------------------------
+
+[1] 数据基座构建（自 V2 起）
+    - D 编号体系：所有关键数字赋予 D-001, D-002... 唯一编号
+    - 5 项勾稽校验：分项求和=总额 / 跨表一致性 / 同比自洽 / 单位归一 / 衍生复算
+    - 数据形态自动归类（S1-S17）
+    - 数据质量评级（A/B/C/D），D 级触发中断询问用户
+
+[2] 双引擎分析体系
+    ┌─ 认知循环引擎（stages/）
+    │  适用：数据量适中、追求归因深度的场景
+    │  结构：10 阶段渐进链（Stage 0 前置问答 + 01数据基座 → 02扫描+筛选 → 03归因 → 03b安全评估 → 04预判 → 05建议 → 06叙事 → 07报告）
+    │  特点：每阶段追问上一阶段未解决的部分，逐层深入；阶段间以 s{N}-handoff.md 摘要轻量交接
+    │
+    └─ 维度分工引擎（stages/02-multi-dim-scan.md）
+       适用：大数据量、多维度、需并行加速的场景
+       结构：Owner + 最多 7 个 Scout 并行协作
+       特点：维度级并行扫描，交叉验证后统一深度分析
+
+[3] 7 维度 Scout 扫描体系
+    量级 / 趋势 / 结构 / 异常 / 关联 / 对比 / 边界
+    每个维度独立 Scout Agent，输出结构化信号块
+
+[4] 假说穷举 + 证据检验
+    第 3 轮归因不再是推断，而是：
+    穷举所有可能假说 → 逐条用 D 编号数据验证/证伪 → 构建归因链 → 诚实标注残余
+
+[5] 三级编号溯源体系
+    D-xxx（数据基座编号）→ V-xxx（验证信号编号）→ S-xxx（筛选信号编号）
+    报告中每条建议可追溯到具体信号和数据来源
+
+[6] 高级可视化
+    - 图表选型决策树：17 种数据形态 × 38 种图表
+    - ECharts 引擎（默认）：20 个模板；全引擎 35 个独立模板（5 引擎），全内联，无 CDN 依赖
+    - KPI 卡片、雷达图、平行坐标、旭日图、箱线图、哑铃图等
+    - 强制 ≥12 张图表，≥3 高级图表 + ≥1 多维可视化
+
+[7] 双主题报告输出
+    - 纯网页版：连续滚动，暗色主题，适合屏幕阅读
+    - A4 分页版：分页设计，A4 幅面，浅色背景，适合打印和公文流转
+    - 均包含：局限性声明 / 勾稽校验记录 / 分析方法说明
+
+[8] 用户可控参数体系（分析启动时配置）
+    P1 归因收敛阈值（默认 67%）
+    P2 情景收敛门槛（默认 < 2 个）
+    P3 建议层级完整性（默认 K=3）
+    P4 筛选权重分配（默认 A×0.55 + B×0.45）
+    P5 多维可视化最低维度（默认 ≥4 轴）
+
+[9] 质量闸门
+    - agent-tools/scripts/verify-report.mjs：报告完整性自动验收
+    - 量化纪律：禁止伪精确概率，无频率基础=定性等级
+    - 受众适配：术语白名单，禁止内部术语泄露
+
+三、架构
+--------------------------------------------------------------------------------
+
+deep-analysis-toolkit-v3/
+├── SKILL.md                              ← 根技能（纯路由 + 参数对话）
+├── README.md                             ← 版本说明与变更日志
+├── stages/                               ← 分阶段执行 prompt（V3.5，10 阶段）
+│   ├── 01-data-foundation.md             ← 数据基座 + data_hash
+│   ├── 02-cognitive-scan.md              ← 全域扫描（R1）+ 信号筛选（R2）
+│   ├── 02-multi-dim-scan.md              ← 多 Agent 并行扫描入口
+│   ├── 02-orchestrator.md                ← 多Agent主控编排器
+│   ├── 02-scout-template.md              ← 7维度Scout通用模板
+│   ├── 02-cross-validation.md            ← 结构化交叉验证
+│   ├── 02-merge-gate.md                  ← 多Agent→认知循环适配层
+│   ├── 03-root-cause-reasoning.md        ← 假说穷举 + 证据检验
+│   ├── 03b-safety-lifecycle.md           ← Safety Lifecycle 安全评估
+│   ├── 04-scenario-predict.md            ← 情景预判
+│   ├── 05-decision-advice.md             ← 分层决策建议
+│   ├── 06-narrative-weave.md             ← 叙事规划
+│   ├── 07a-narrative-assembly.md        ← 叙事组装（→ blueprint.md）
+│   ├── 07b-html-generate.md             ← HTML 报告生成（ECharts 内联）
+│   └── _shared-anchor.md                ← 跨阶段共享锚定协议
+├── themes/                               ← CSS 主题预设（V3.5）
+│   ├── theme-dark.css                    ← 纯网页版：暗色 + 金色主色调
+│   └── theme-a4.css                      ← A4 分页版：深蓝封面 + 浅色内页
+├── agent-tools/
+│   ├── platform/                         ← 平台原生工具声明（8个）
+│   ├── scripts/                          ← 28 个 .mjs + 27 个 tool.json + merge-analysis-state.py
+│   ├── registry.json                     ← 工具注册表（27 个脚本工具）
+│   └── tool-schema.json                  ← 工具模式定义
+└── references/
+    ├── methodology/                      ← 共享方法论（唯一副本）
+    │   ├── 7-dimension-methodology.md    ← 七维认知框架
+    │   ├── analysis-state-protocol.md    ← 中间态读写协议
+    │   ├── convergence-rules.md          ← 收敛判断规则
+    │   ├── visualization-mapping.md      ← 图表选型决策树（含 35 模板路径）
+│   │   ├── theme-classes.md              ← 双主题 CSS 类名速查
+    ├── templates/                        ← 图表模板（按引擎分目录，35 个独立 HTML）
+    │   ├── echarts/  (20)
+    │   ├── apexcharts/  (3)
+    │   ├── d3/  (8)
+    │   ├── chartjs/  (1)
+    │   └── threejs/  (3)
+    └── vendor/                           ← 图表库（全内联，零 CDN）
+        ├── echarts.min.js
+        ├── apexcharts.min.js
+        ├── d3.v7.min.js
+        ├── chart.js.min.js
+        └── three.min.js
+
+模块依赖关系：
+  根 SKILL.md
+    ├──[路由]→ stages/01-data-foundation.md
+    │   ├── 计算 data_hash: node agent-tools/scripts/hash-data.mjs
+    │   └── 写入 analysis-state-s1.md → generate-handoff.mjs 生成 s1-handoff.md
+    ├──[路由]→ stages/02-cognitive-scan.md（中小数据、深度归因）
+    │   └── 引用 references/methodology/7-dimension-methodology.md/analysis-state-protocol.md
+    ├──[路由]→ stages/02-multi-dim-scan.md（大数据、并行扫描）
+    │   └── 借用 stages/03-04-05 的归因逻辑
+    ├── → stages/03-root-cause-reasoning.md
+    ├── → stages/03b-safety-lifecycle.md
+    ├── → stages/04-scenario-predict.md
+    ├── → stages/05-decision-advice.md
+    ├── → stages/06-narrative-weave.md
+    ├── → stages/07a-narrative-assembly.md（仅读 s6-handoff.md 摘要 + state-query 切片）
+    └── → stages/07b-html-generate.md
+        ├── 读取 themes/theme-dark.css 或 themes/theme-a4.css
+        ├── 读取 references/vendor/echarts.min.js（必读）
+        └── → node agent-tools/scripts/verify-report.mjs <报告.html>
+
+  贯穿全程：
+    ├── TODO 编排：pipeline-todo.json（78 个原子 TODO）↔ pipeline-state.json（运行时状态）
+    ├── 阶段交接：generate-handoff.mjs → s{N}-handoff.md（约 8-12K token）；state-query.mjs 定向切片读取
+    └── 确定性合并：阶段 5(+3b) 后 merge-analysis-state.py → analysis-state.md（仅脚本审计用）
+
+四、工作流
+--------------------------------------------------------------------------------
+
+完整分析流程（四层认知递进，映射至 10 个执行阶段：Stage 0 前置问答 + 9 个分析阶段）：
+
+Stage 0：前置问答（自动）
+  两批 ask_followup_question 收集 P0/P6/P7 + P8/封面标题 → P1-P5 使用系统默认值 → 写入 analysis-state-s1.md「分析参数」章节 → 不再回问
+  ↓ generate-handoff.mjs 生成 s1-handoff.md
+
+阶段 1：数据基座构建（自动）
+  创建隔离目录 → 计算 data_hash → D 编号体系 → 5 项勾稽校验（脚本接管）→ 质量评级 → 冻结为唯一数据来源
+  ↓ 分析状态文件：analysis-state-s1.md（与源数据同目录）；阶段末尾生成 s1-handoff.md
+
+阶段 2：维度扫描与信号筛选
+  深度分析路径：7 维度 Scout 并行 → 7×7 冲突矩阵 → 盲区聚合 → 置信度交叉校准
+  轻量分析路径：7 维度顺序扫描 → 基础交叉验证（3 项）
+  ↓ 产物：O→V→S 三层穿透信号 + 极高/高/中优先级矩阵；生成 s2-handoff.md
+
+阶段 3→3b→4→5：四层深度分析（每阶段末尾 generate-handoff 生成 s3/s3b/s4/s5-handoff.md）
+  阶段 3：假说穷举 + 三级证据检验 + 归因链（近因→远因→结构因）+ validate-o-v-s-chain 穿透链校验
+  阶段 3b：Safety Lifecycle 安全演化阶段评估（五维评分 + 脆弱性扫描）
+  阶段 4：情景预判 + 反事实推断 + 置信度评级
+  阶段 5：四层决策建议（紧急/短期/中长期/制度），每条可追溯至 D/V/S 编号
+  ↓ check-convergence.mjs 收敛门禁（阶段 2→6 全程执行）
+  ↓ merge-analysis-state.py 确定性合并 s1-s5(+3b) → analysis-state.md（仅脚本审计用）
+
+阶段 6：叙事规划
+  叙事主线 + 动态章节决策 + 图表需求清单（按 P7 约束）+ match-chart-templates.mjs 模板匹配
+  ↓ validate-blueprint-for-7b 蓝图门禁（7 项规则）；生成 s6-handoff.md
+
+阶段 7a→7b：报告生成（同一会话连续执行）
+  7a：仅读 s6-handoff.md 摘要 + state-query 定向切片 → 叙事组装 → blueprint.md（纯 Markdown 叙事蓝图，⏸️ 人工终审断点）
+  7b：Link-then-Inline → assemble-report.mjs 组装 → verify-report.mjs 质量闸门验收
+  ↓ 最终输出：自包含单文件 HTML 报告
+
+五、V3 vs V1 关键改进
+--------------------------------------------------------------------------------
+
+| 问题           | V1 表现                     | V3 修复                              |
+|---------------|----------------------------|--------------------------------------|
+| 数据错配       | 指标值与真实不符             | 数据基座 QUALITY 评级 + 5 项勾稽校验            |
+| 伪精确概率     | 无推导依据的概率数字          | 已纳入 references/methodology/7-dimension-methodology.md 第 7 条戒律 |
+| 报告不完整     | 缺必备模块                  | 已纳入 stages/07b-html-generate.md checklist，8 项必备      |
+| 内部术语泄露   | Engine A/B 暴露给读者        | R6 受众适配 + 术语白名单               |
+| CDN 依赖       | Chart.js CDN，断网失效       | R7 ECharts 3MB 全内联（references/vendor/），零外部依赖      |
+| 失效引用       | 路径/脚本不存在              | 路径全修复，verify-report.mjs + hash-data.mjs 均可运行    |
+
+六、使用建议
+--------------------------------------------------------------------------------
+
+[场景 1] 经营数据分析 / 财务报表审查
+  推荐：认知循环引擎
+  原因：数据量适中，需要追问"为什么利润下降""成本结构变化根因"
+  提示词示例："帮我深度分析这份经营数据，追溯根本原因"
+
+[场景 2] 大规模多维数据集（>1000 行，>15 维度列）
+  推荐：维度分工引擎
+  原因：需要并行加速，多维度同时扫描
+  提示词示例："对这份大表做多维度并行扫描"
+
+[场景 3] 安全事件根因分析
+  推荐：认知循环引擎
+  原因：追求单一问题极致归因深度，需要穷举假说
+  注意：启动时 P1 可设为 100%（激进，全部 low 才收），追求最完整分析
+
+[场景 4] 定期监控报告（周报/月报）
+  推荐：认知循环引擎
+  原因：数据规模稳定，流程固定
+  建议：P1 用默认 67%，平衡深度与效率
+
+[最佳实践]
+  1. 源数据文件放进独立子目录，命名格式：{task_name}_{YYYYMMDD}_{HHMM}/
+  2. 分析中断后可读取各阶段 analysis-state-s{N}.md 或 s{N}-handoff.md 摘要续跑
+  3. 报告中的"局限性声明"必须认真阅读——它诚实标注了分析边界
+  4. 勾稽不通过不中断流程，但必须信任报告中标注的差异
+  5. 如对分析结果不满意，调整 P1-P5 参数重新运行
+
+[常见问题]
+  Q: 两个引擎可以组合使用吗？
+  A: 可以。维度分工引擎的阶段 3 借用认知循环的阶段 3-6 逻辑，本质上是组合。
+
+  Q: 分析需要多长时间？
+  A: 取决于数据量和复杂度。认知循环（全 10 阶段）约 5-10 分钟；
+     维度分工（并行扫描）约 3-8 分钟。
+
+  Q: analysis-state-s{N}.md 会很大吗？
+  A: 每阶段状态平均 100-500KB，包含完整分析记录；但阶段间通过 s{N}-handoff.md 摘要交接（约 8-12K token），可安全保留用于审计。
+
+================================================================================
+  文档版本：v3.5.0 | 生成日期：2026-08-02
+================================================================================
