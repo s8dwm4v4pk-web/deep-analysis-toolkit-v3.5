@@ -1,0 +1,16 @@
+{
+  "name": "check-blueprint-fields",
+  "type": "script",
+  "category": "validation",
+  "description": "校验 blueprint.md 中各 chart 块的字段完整性和格式规范度",
+  "invocation": "node agent-tools/scripts/check-blueprint-fields.mjs <blueprint.md路径> [--json] [--strict]",
+  "parameters": {
+    "blueprint_path": { "type": "string", "required": true, "description": "blueprint.md 文件路径" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "strict": { "type": "boolean", "required": false, "description": "启用严格模式，校验更多字段" }
+  },
+  "returns": { "type": "object", "description": "字段完整性和规范度报告" },
+  "exitCodes": { "0": "所有必填字段完整", "1": "存在缺失字段" },
+  "mandatory": false,
+  "stageUsage": ["stage-7a"]
+}
