@@ -1,0 +1,25 @@
+<!--
+  模板: 旭日图 (sunburst)
+  引擎: ECharts
+  数据形态: S10 层级+占比
+  DOM ID: chart-sunburst
+  说明: 仅当数据有天然多层+占比结构时使用，rotate: 0 保持文字水平可读
+-->
+(function() {
+  const dom = document.getElementById('chart-sunburst');
+  const myChart = echarts.init(dom);
+  const sbData = [
+    { name: '总项', value: 100, children: [
+      { name: '类别A', value: 40, children: [{ name: '子A1', value: 25 }, { name: '子A2', value: 15 }] },
+      { name: '类别B', value: 35, children: [{ name: '子B1', value: 20 }, { name: '子B2', value: 15 }] },
+      { name: '类别C', value: 25, children: [{ name: '子C1', value: 15 }, { name: '子C2', value: 10 }] }
+    ]}
+  ];
+  myChart.setOption({
+    tooltip: { formatter: '{b}: {c} ({d}%)' },
+    series: [{ type: 'sunburst', data: sbData, radius: [0, '90%'], label: { rotate: 0 },
+      itemStyle: { borderRadius: 4, borderWidth: 2, borderColor: '#fff' },
+      emphasis: { focus: 'ancestor' } }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
