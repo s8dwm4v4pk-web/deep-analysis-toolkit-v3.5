@@ -1,0 +1,40 @@
+<!--
+  模板: 哑铃图 (dumbbell)
+  引擎: ECharts
+  数据形态: S1/S7 两期变化
+  DOM ID: chart-dumbbell
+  说明: 同时呈现每组变化幅度和方向，需明确的前/后两期配对数据
+  🔴 铁律：renderItem 内必须使用 api.value(N) 按维度序号取值，
+     禁止使用 params.data.propertyName —— encode 映射后原始属性可能丢失
+-->
+(function() {
+  const dom = document.getElementById('chart-dumbbell');
+  const myChart = echarts.init(dom);
+  const categories = ['项目A', '项目B', '项目C', '项目D', '项目E'];
+  const before = [30, 45, 22, 55, 38];
+  const after  = [42, 50, 35, 48, 60];
+  myChart.setOption({
+    tooltip: { trigger: 'axis', formatter: p => {
+      const cat = categories[p[0].dataIndex];
+      const b = before[p[0].dataIndex], a = after[p[0].dataIndex];
+      return cat + '<br/>前期: ' + b + '<br/>后期: ' + a + '<br/>变化: ' + (a - b >= 0 ? '+' : '') + (a - b);
+    }},
+    grid: { left: '15%', right: '10%', top: '8%', bottom: '8%' },
+    xAxis: { type: 'value', name: '数值' },
+    yAxis: { type: 'category', data: categories },
+    series: [
+      { type: 'custom', name: '哑铃杆', data: categories.map((cat, i) => ({ value: i, b: before[i], a: after[i] })),
+        renderItem: function(params, api) {
+          const y = api.coord([0, params.dataIndex])[1];
+          // 🔴 api.value(1)=before值, api.value(2)=after值（按encode维度序号取值，不可用params.data.xxx）
+          const x1 = api.coord([api.value(1), 0])[0];
+          const x2 = api.coord([api.value(2), 0])[0];
+          return { type: 'line', shape: { x1: x1, y1: y, x2: x2, y2: y }, style: { stroke: '#94a3b8', lineWidth: 2 } };
+        }, encode: { x: [1, 2], y: 0 }
+      },
+      { type: 'scatter', name: '前期', data: before.map((v, i) => [v, categories[i]]), symbolSize: 14, itemStyle: { color: '#3b82f6' } },
+      { type: 'scatter', name: '后期', data: after.map((v, i) => [v, categories[i]]), symbolSize: 14, itemStyle: { color: '#ef4444' } }
+    ]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
