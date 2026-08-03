@@ -1,0 +1,19 @@
+<!--
+  模板: 雷达图 (radar)
+  引擎: ECharts
+  数据形态: S2 多维矩阵
+  DOM ID: chart-radar
+  说明: M 个实体 × N 个指标，量纲需预先标准化
+-->
+(function() {
+  const dom = document.getElementById('chart-radar');
+  const myChart = echarts.init(dom);
+  const indicators = [{ name: '指标A', max: 100 }, { name: '指标B', max: 100 }, { name: '指标C', max: 100 }];
+  const seriesData = [{ name: '实体1', value: [80, 60, 90] }, { name: '实体2', value: [50, 85, 70] }];
+  myChart.setOption({
+    legend: { data: seriesData.map(d => d.name), bottom: 0 },
+    radar: { indicator: indicators, center: ['50%', '48%'], radius: '65%' },
+    series: [{ type: 'radar', data: seriesData, areaStyle: { opacity: 0.1 } }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
