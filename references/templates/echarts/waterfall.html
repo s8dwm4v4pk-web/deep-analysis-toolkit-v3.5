@@ -1,0 +1,26 @@
+<!--
+  模板: 瀑布图 (waterfall)
+  引擎: ECharts
+  数据形态: S1 增量贡献
+  DOM ID: chart-waterfall
+  说明: 展示增量的逐级贡献，每个柱子的起点是前一根的终点
+-->
+(function() {
+  const dom = document.getElementById('chart-waterfall');
+  const myChart = echarts.init(dom);
+  const raw = [900, 345, 393, -108, -154, 100, 178, -340, 200];
+  const categories = ['初始', 'A', 'B', 'C', 'D', 'E', 'F', 'G', '最终'];
+  let base = 0;
+  const helper = raw.map((v, i) => { const item = [i, base, base + v]; if (i < raw.length - 1) base += v; return item; });
+  const transparentData = helper.map(d => d[2] > d[1] ? [d[0], d[1], d[1]] : [d[0], d[2], d[1]]);
+  const visibleData = helper.map(d => [d[0], d[2] > d[1] ? d[1] : d[2], d[2] > d[1] ? d[2] : d[1]]);
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '14%' },
+    xAxis: { type: 'category', data: categories }, yAxis: { type: 'value' },
+    series: [
+      { type: 'bar', stack: 'waterfall', data: transparentData, itemStyle: { color: 'transparent' }, barWidth: '50%' },
+      { type: 'bar', stack: 'waterfall', data: visibleData, itemStyle: { color: p => p.data[2] > p.data[1] ? '#22c55e' : '#ef4444' } }
+    ]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
