@@ -1,0 +1,15 @@
+{
+  "name": "classify-data-shape",
+  "type": "script",
+  "category": "processing",
+  "description": "分析数据文件的结构形态（时间序列/结构对比/etc），指导后续分析策略",
+  "invocation": "node agent-tools/scripts/classify-data-shape.mjs <data.csv|data.json> [--json]",
+  "parameters": {
+    "data_path": { "type": "string", "required": true, "description": "数据文件路径" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" }
+  },
+  "returns": { "type": "object", "description": "数据形态分类结果，含形态类型和维度信息" },
+  "exitCodes": { "0": "分类成功", "1": "数据格式不支持" },
+  "mandatory": false,
+  "stageUsage": ["stage-1", "stage-2"]
+}
