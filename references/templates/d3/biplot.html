@@ -1,0 +1,77 @@
+<!--
+  模板: PCA 双标图 (PCA biplot)
+  引擎: D3 v7
+  数据形态: S2 多维矩阵 / S15 高维数据
+  DOM ID: chart-biplot
+  说明: 一个平面同时展示样本点（散点）和变量载荷方向（箭头），降维后可读性高
+  前置: HTML 需内联 d3.v7.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-biplot');
+  const width = dom.clientWidth || 800;
+  const height = 500;
+  const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  // 样本在主成分空间中的坐标（PC1, PC2）
+  const samples = [
+    { name: '样本1', pc1: 2.5, pc2: 1.2 }, { name: '样本2', pc1: -1.8, pc2: 0.8 },
+    { name: '样本3', pc1: 0.5, pc2: -2.1 }, { name: '样本4', pc1: -1.2, pc2: -0.9 },
+    { name: '样本5', pc1: 3.1, pc2: -0.5 }, { name: '样本6', pc1: -0.3, pc2: 1.8 },
+    { name: '样本7', pc1: 1.8, pc2: 0.3 }, { name: '样本8', pc1: -2.2, pc2: -1.5 }
+  ];
+  // 变量载荷（PC1, PC2 方向）
+  const loadings = [
+    { name: '指标A', pc1: 0.8, pc2: 0.3 }, { name: '指标B', pc1: -0.6, pc2: 0.5 },
+    { name: '指标C', pc1: 0.4, pc2: -0.7 }, { name: '指标D', pc1: -0.5, pc2: -0.4 },
+    { name: '指标E', pc1: 0.7, pc2: 0.1 }
+  ];
+  const allVals = [...samples.flatMap(d => [d.pc1, d.pc2]), ...loadings.flatMap(d => [d.pc1, d.pc2])];
+  const xExtent = d3.extent(allVals.filter((_, i) => i % 2 === 0));
+  const yExtent = d3.extent(allVals.filter((_, i) => i % 2 === 1));
+  const xScale = d3.scaleLinear().domain([xExtent[0] * 1.2, xExtent[1] * 1.2]).range([0, innerW]);
+  const yScale = d3.scaleLinear().domain([yExtent[1] * 1.2, yExtent[0] * 1.2]).range([0, innerH]);
+  const svg = d3.select(dom).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  // 坐标轴
+  g.append('g').call(d3.axisBottom(xScale)).attr('transform', `translate(0,${innerH})`);
+  g.append('g').call(d3.axisLeft(yScale));
+  g.append('text').attr('x', innerW / 2).attr('y', innerH + 40).attr('text-anchor', 'middle').text('PC1');
+  g.append('text').attr('transform', 'rotate(-90)').attr('x', -innerH / 2).attr('y', -40).attr('text-anchor', 'middle').text('PC2');
+  // 零线
+  g.append('line').attr('x1', xScale(0)).attr('y1', 0).attr('x2', xScale(0)).attr('y2', innerH).attr('stroke', '#cbd5e1').attr('stroke-dasharray', '4,4');
+  g.append('line').attr('x1', 0).attr('y1', yScale(0)).attr('x2', innerW).attr('y2', yScale(0)).attr('stroke', '#cbd5e1').attr('stroke-dasharray', '4,4');
+  // 样本点
+  g.selectAll('.sample').data(samples).join('circle')
+    .attr('cx', d => xScale(d.pc1)).attr('cy', d => yScale(d.pc2))
+    .attr('r', 6).attr('fill', '#3b82f6').attr('opacity', 0.7);
+  // 样本标签
+  g.selectAll('.sample-label').data(samples).join('text')
+    .attr('x', d => xScale(d.pc1) + 8).attr('y', d => yScale(d.pc2) + 4)
+    .text(d => d.name).attr('font-size', 10).attr('fill', '#475569');
+  // 载荷箭头
+  const arrowHead = d3.symbol(d3.symbolTriangle, 8);
+  g.selectAll('.loading-arrow').data(loadings).join('line')
+    .attr('x1', 0).attr('y1', 0)
+    .attr('x2', d => xScale(d.pc1)).attr('y2', d => yScale(d.pc2))
+    .attr('stroke', '#ef4444').attr('stroke-width', 1.5)
+    .attr('marker-end', 'url(#arrow)');
+  // 箭头标记
+  svg.append('defs').append('marker')
+    .attr('id', 'arrow').attr('viewBox', '0 -5 10 10')
+    .attr('refX', 8).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#ef4444');
+  // 载荷标签
+  g.selectAll('.loading-label').data(loadings).join('text')
+    .attr('x', d => xScale(d.pc1) + 6).attr('y', d => yScale(d.pc2) - 6)
+    .text(d => d.name).attr('font-size', 11).attr('fill', '#ef4444').attr('font-weight', 'bold');
+  window.addEventListener('resize', () => {
+    const w = dom.clientWidth || 800;
+    svg.attr('width', w);
+    xScale.range([0, w - margin.left - margin.right]);
+    // 简化重绘：清除后重新渲染
+    svg.selectAll('*').remove();
+    // 生产环境建议使用完整重绘逻辑
+  });
+})();
