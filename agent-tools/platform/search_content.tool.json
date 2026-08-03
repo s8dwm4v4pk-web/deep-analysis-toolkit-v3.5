@@ -1,0 +1,19 @@
+{
+  "name": "search_content",
+  "type": "platform",
+  "category": "io",
+  "description": "基于 ripgrep 的正则文本搜索，支持文件类型过滤和上下文行",
+  "parameters": {
+    "pattern": { "type": "string", "required": true, "description": "正则表达式搜索模式" },
+    "path": { "type": "string", "required": false, "description": "搜索目标绝对路径，默认工作区根目录" },
+    "glob": { "type": "string", "required": false, "description": "文件匹配 glob 模式" },
+    "type": { "type": "string", "required": false, "description": "文件类型标记（rg --type）" },
+    "contextBefore": { "type": "number", "required": false, "description": "每个匹配行前面显示的行数" },
+    "contextAfter": { "type": "number", "required": false, "description": "每个匹配行后面显示的行数" },
+    "contextAround": { "type": "number", "required": false, "description": "每个匹配行前后显示的行数" },
+    "outputMode": { "type": "string", "required": false, "description": "输出模式：content / files_with_matches / count" },
+    "caseSensitive": { "type": "boolean", "required": false, "description": "是否区分大小写" }
+  },
+  "returns": { "type": "string", "description": "匹配结果文本" },
+  "stageUsage": ["all"]
+}
