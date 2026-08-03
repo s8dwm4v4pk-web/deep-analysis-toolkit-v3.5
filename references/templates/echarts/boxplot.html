@@ -1,0 +1,29 @@
+<!--
+  模板: 箱线图 (boxplot)
+  引擎: ECharts
+  数据形态: S1/S5 分布+离群
+  DOM ID: chart-boxplot
+  说明: 数据格式 [min, Q1, median, Q3, max]，需足够样本量支撑分位数计算
+-->
+(function() {
+  const dom = document.getElementById('chart-boxplot');
+  const myChart = echarts.init(dom);
+  // 数据格式: [min, Q1, median, Q3, max]
+  const boxData = [
+    { name: '组A', value: [10, 22, 30, 38, 52] },
+    { name: '组B', value: [18, 28, 35, 45, 65] },
+    { name: '组C', value: [5, 15, 25, 32, 48] },
+    { name: '组D', value: [25, 35, 42, 50, 70] }
+  ];
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '12%' },
+    tooltip: { trigger: 'item' },
+    dataset: [{ source: boxData.map(d => [d.name, ...d.value]) }],
+    xAxis: { type: 'category' }, yAxis: { type: 'value', name: '数值' },
+    series: [{
+      type: 'boxplot', encode: { x: 0, y: [1, 2, 3, 4, 5] },
+      itemStyle: { color: '#5470c6', borderColor: '#3a5ba0' }
+    }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
