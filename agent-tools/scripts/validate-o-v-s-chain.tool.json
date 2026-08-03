@@ -1,0 +1,16 @@
+{
+  "name": "validate-o-v-s-chain",
+  "type": "script",
+  "category": "validation",
+  "description": "O→V→S 三层穿透链完整性校验：验证每一条 O 编号被至少一条 V 引用、每一条 V 编号被至少一条 S 信号合成、每一条 S 可追溯至 V→O→D 全链。发现孤立的中间层编号（无父/无子）时报告断裂位置。",
+  "invocation": "node agent-tools/scripts/validate-o-v-s-chain.mjs <analysis-state.md路径> [--json] [--verbose]",
+  "parameters": {
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 绝对或相对路径" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "verbose": { "type": "boolean", "required": false, "description": "输出每条链的逐级追溯详情" }
+  },
+  "returns": { "type": "object", "description": "{ chain_integrity: { o_v: { total, linked, orphaned }, v_s: { total, linked, orphaned } }, break_points: [...] }" },
+  "exitCodes": { "0": "O→V→S 链完整（无断裂）", "1": "存在断裂：孤立的中间层编号" },
+  "mandatory": true,
+  "stageUsage": ["stage-3", "stage-4"]
+}
