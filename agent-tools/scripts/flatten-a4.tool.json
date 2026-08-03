@@ -1,0 +1,15 @@
+{
+  "name": "flatten-a4",
+  "type": "script",
+  "category": "post-processing",
+  "description": "将报告扁平化为适合 A4 打印的无分页连续流式布局",
+  "invocation": "node agent-tools/scripts/flatten-a4.mjs <report.html> [output.html]",
+  "parameters": {
+    "input_path": { "type": "string", "required": true, "description": "报告 HTML 路径" },
+    "output_path": { "type": "string", "required": false, "description": "输出路径" }
+  },
+  "returns": { "type": "string", "description": "A4 扁平化后的 HTML" },
+  "exitCodes": { "0": "扁平化处理完成", "1": "处理失败" },
+  "mandatory": false,
+  "stageUsage": ["stage-7b"]
+}
