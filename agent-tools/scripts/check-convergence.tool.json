@@ -1,0 +1,17 @@
+{
+  "name": "check-convergence",
+  "type": "script",
+  "category": "gate",
+  "description": "收敛门禁检查：读取 analysis-state.md 中当前阶段的产出，对照 references/methodology/convergence-rules.md 中对应阶段的行，判定 go/no-go。所有条件通过 → exit 0（进入下一阶段），任一条件失败 → exit 1（触发收敛跳转），缺失门禁信息 → exit 2（需人工介入）。",
+  "invocation": "node agent-tools/scripts/check-convergence.mjs <analysis-state.md路径> <当前阶段号> [--json] [--convergence-rules=<path>]",
+  "parameters": {
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 路径" },
+    "stage": { "type": "string", "required": true, "description": "当前阶段：2, 3, 3b, 4, 5, 6" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "convergence_rules": { "type": "string", "required": false, "description": "收敛规则文件路径，默认 references/methodology/convergence-rules.md" }
+  },
+  "returns": { "type": "object", "description": "{ stage, pass, conditions: [{rule, result, detail}], verdict: 'go'|'halt'|'skip_to_7'|'retry_3b'|'retry_6'|'soft_skip' }" },
+  "exitCodes": { "0": "所有收敛条件通过 → go", "1": "收敛条件不通过 → 触发 action", "2": "缺少收敛规则或 state 信息不足" },
+  "mandatory": true,
+  "stageUsage": ["stage-2", "stage-3", "stage-3b", "stage-4", "stage-5", "stage-6"]
+}
