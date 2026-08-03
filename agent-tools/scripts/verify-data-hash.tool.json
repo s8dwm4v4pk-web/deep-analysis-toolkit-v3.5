@@ -1,0 +1,16 @@
+{
+  "name": "verify-data-hash",
+  "type": "script",
+  "category": "validation",
+  "description": "全流程数据指纹一致性校验：比对 analysis-state.md 中记录的数据哈希与源数据文件重新计算的指纹。依赖 hash-data.mjs 在阶段 1 写入的 data_hash 字段。在任意阶段入口执行以确认源数据未被篡改或意外变更。",
+  "invocation": "node agent-tools/scripts/verify-data-hash.mjs [--json] [--data-file=path]",
+  "parameters": {
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "data_file": { "type": "string", "required": false, "description": "数据文件路径，默认使用 analysis-state.md 中 data_hash 记录的文件路径" }
+  },
+  "returns": { "type": "object", "description": "{ stored_hash, recomputed_hash, match, data_file_path } —— 哈希比对结果" },
+  "exitCodes": { "0": "数据指纹一致，数据完整性通过", "1": "哈希不匹配 → HALT，数据可能已被修改" },
+  "mandatory": true,
+  "dependency": "hash-data.mjs（必须先在阶段 1 运行以写入 data_hash 字段）",
+  "stageUsage": ["stage-1", "stage-2", "stage-3", "stage-3b", "stage-4", "stage-5", "stage-6", "stage-7a", "stage-7b"]
+}
