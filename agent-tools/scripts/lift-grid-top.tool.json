@@ -1,0 +1,15 @@
+{
+  "name": "lift-grid-top",
+  "type": "script",
+  "category": "post-processing",
+  "description": "将 ECharts grid 组件整体上移，减少顶部空白",
+  "invocation": "node agent-tools/scripts/lift-grid-top.mjs <input.html> [output.html]",
+  "parameters": {
+    "input_path": { "type": "string", "required": true, "description": "输入 HTML 路径" },
+    "output_path": { "type": "string", "required": false, "description": "输出路径" }
+  },
+  "returns": { "type": "string", "description": "grid 上移后的 HTML" },
+  "exitCodes": { "0": "grid 上移处理完成", "1": "处理失败" },
+  "mandatory": false,
+  "stageUsage": ["stage-7b"]
+}
