@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "id": "deep-analysis-toolkit-v3",
+    "version": "3.5.0",
+    "description": "deep-analysis-toolkit-v3 全量工具注册表，供 Agent 平台启动时一次性加载",
+    "totalTools": 35,
+    "platformTools": 8,
+    "scriptTools": 27
+  },
+  "tools": {
+    "platform": {
+      "read_file": { "definition": "agent-tools/platform/read_file.tool.json", "stageUsage": ["all"] },
+      "ask_followup_question": { "definition": "agent-tools/platform/ask_followup_question.tool.json", "stageUsage": ["stage-0"] },
+      "search_file": { "definition": "agent-tools/platform/search_file.tool.json", "stageUsage": ["all"] },
+      "search_content": { "definition": "agent-tools/platform/search_content.tool.json", "stageUsage": ["all"] },
+      "list_dir": { "definition": "agent-tools/platform/list_dir.tool.json", "stageUsage": ["all"] },
+      "preview_url": { "definition": "agent-tools/platform/preview_url.tool.json", "stageUsage": ["stage-7b"] },
+      "RAG_search": { "definition": "agent-tools/platform/RAG_search.tool.json", "stageUsage": ["stage-0", "stage-2", "stage-3"] },
+      "use_skill": { "definition": "agent-tools/platform/use_skill.tool.json", "stageUsage": ["all"] }
+    },
+    "scripts": {
+      "validate-session": { "definition": "agent-tools/scripts/validate-session.tool.json", "mandatory": true, "stageUsage": ["all"] },
+      "audit-state-structure": { "definition": "agent-tools/scripts/audit-state-structure.tool.json", "mandatory": true, "stageUsage": ["all"] },
+      "hash-data": { "definition": "agent-tools/scripts/hash-data.tool.json", "mandatory": false, "stageUsage": ["stage-1"] },
+      "reconcile-report": { "definition": "agent-tools/scripts/reconcile-report.tool.json", "mandatory": false, "stageUsage": ["stage-1"] },
+      "verify-data-hash": { "definition": "agent-tools/scripts/verify-data-hash.tool.json", "mandatory": true, "stageUsage": ["stage-1"] },
+      "classify-data-shape": { "definition": "agent-tools/scripts/classify-data-shape.tool.json", "mandatory": false, "stageUsage": ["stage-2"] },
+      "trace-d-numbers": { "definition": "agent-tools/scripts/trace-d-numbers.tool.json", "mandatory": false, "stageUsage": ["stage-6", "stage-7a"] },
+      "verify-chart-data-blocks": { "definition": "agent-tools/scripts/verify-chart-data-blocks.tool.json", "mandatory": false, "stageUsage": ["stage-7a"] },
+      "check-blueprint-fields": { "definition": "agent-tools/scripts/check-blueprint-fields.tool.json", "mandatory": false, "stageUsage": ["stage-7a"] },
+      "validate-chart-checklist": { "definition": "agent-tools/scripts/validate-chart-checklist.tool.json", "mandatory": false, "stageUsage": ["stage-6"] },
+      "assemble-report": { "definition": "agent-tools/scripts/assemble-report.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "verify-report": { "definition": "agent-tools/scripts/verify-report.tool.json", "mandatory": true, "stageUsage": ["stage-7b"] },
+      "center-chart": { "definition": "agent-tools/scripts/center-chart.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "ensure-contain-label": { "definition": "agent-tools/scripts/ensure-contain-label.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "fix-a4-chart-height": { "definition": "agent-tools/scripts/fix-a4-chart-height.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "fix-overflow": { "definition": "agent-tools/scripts/fix-overflow.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "flatten-a4": { "definition": "agent-tools/scripts/flatten-a4.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "lift-grid-top": { "definition": "agent-tools/scripts/lift-grid-top.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "safeguard-echarts-grid": { "definition": "agent-tools/scripts/safeguard-echarts-grid.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "taller-chart": { "definition": "agent-tools/scripts/taller-chart.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "validate-chart-dom": { "definition": "agent-tools/scripts/validate-chart-dom.tool.json", "mandatory": false, "stageUsage": ["stage-7b"] },
+      "generate-handoff": { "definition": "agent-tools/scripts/generate-handoff.tool.json", "mandatory": true, "stageUsage": ["stage-1", "stage-2", "stage-3", "stage-4", "stage-5", "stage-6", "stage-7a", "stage-7b"] },
+      "state-query": { "definition": "agent-tools/scripts/state-query.tool.json", "mandatory": true, "stageUsage": ["stage-2", "stage-3", "stage-4", "stage-5", "stage-6", "stage-7a", "stage-7b"] },
+      "check-convergence": { "definition": "agent-tools/scripts/check-convergence.tool.json", "mandatory": true, "stageUsage": ["stage-2", "stage-3", "stage-4", "stage-5", "stage-6"] },
+      "validate-o-v-s-chain": { "definition": "agent-tools/scripts/validate-o-v-s-chain.tool.json", "mandatory": false, "stageUsage": ["stage-3", "stage-4"] },
+      "validate-blueprint-for-7b": { "definition": "agent-tools/scripts/validate-blueprint-for-7b.tool.json", "mandatory": true, "stageUsage": ["stage-6", "stage-7a"] },
+      "match-chart-templates": { "definition": "agent-tools/scripts/match-chart-templates.tool.json", "mandatory": false, "stageUsage": ["stage-6"] }
+    }
+  },
+  "stages": {
+    "stage-0": { "required": ["ask_followup_question", "RAG_search", "read_file", "search_content", "search_file", "list_dir", "use_skill"] },
+    "stage-1": { "required": ["read_file", "search_content", "validate-session", "audit-state-structure", "hash-data", "reconcile-report", "verify-data-hash", "generate-handoff"] },
+    "stage-2": { "required": ["read_file", "search_content", "classify-data-shape", "RAG_search", "generate-handoff", "state-query", "check-convergence"] },
+    "stage-3": { "required": ["read_file", "search_content", "RAG_search", "generate-handoff", "state-query", "check-convergence", "validate-o-v-s-chain"] },
+    "stage-4": { "required": ["read_file", "search_content", "generate-handoff", "state-query", "check-convergence", "validate-o-v-s-chain"] },
+    "stage-5": { "required": ["read_file", "search_content", "generate-handoff", "state-query", "check-convergence"] },
+    "stage-6": { "required": ["read_file", "search_content", "trace-d-numbers", "validate-chart-checklist", "match-chart-templates", "validate-blueprint-for-7b", "generate-handoff", "state-query", "check-convergence"] },
+    "stage-7a": { "required": ["read_file", "search_content", "trace-d-numbers", "verify-chart-data-blocks", "check-blueprint-fields", "validate-blueprint-for-7b", "generate-handoff", "state-query"] },
+    "stage-7b": { "required": ["read_file", "search_content", "preview_url", "assemble-report", "verify-report", "center-chart", "ensure-contain-label", "fix-a4-chart-height", "fix-overflow", "lift-grid-top", "safeguard-echarts-grid", "taller-chart", "validate-chart-dom", "flatten-a4", "generate-handoff", "state-query"] }
+  }
+}
