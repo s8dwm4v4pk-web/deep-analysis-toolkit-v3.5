@@ -1,0 +1,15 @@
+{
+  "name": "center-chart",
+  "type": "script",
+  "category": "post-processing",
+  "description": "将 HTML 报告中的 ECharts 图表容器水平居中",
+  "invocation": "node agent-tools/scripts/center-chart.mjs <input.html> [output.html]",
+  "parameters": {
+    "input_path": { "type": "string", "required": true, "description": "输入 HTML 路径" },
+    "output_path": { "type": "string", "required": false, "description": "输出路径，默认覆盖输入文件" }
+  },
+  "returns": { "type": "string", "description": "居中处理后的 HTML" },
+  "exitCodes": { "0": "居中处理完成", "1": "处理失败" },
+  "mandatory": false,
+  "stageUsage": ["stage-7b"]
+}
