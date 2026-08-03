@@ -1,0 +1,12 @@
+{
+  "name": "RAG_search",
+  "type": "platform",
+  "category": "knowledge",
+  "description": "从已连接的知识库中检索信息，用于补充分析上下文",
+  "parameters": {
+    "queryString": { "type": "string", "required": true, "description": "搜索查询文本" },
+    "knowledgeBaseNames": { "type": "string", "required": false, "description": "逗号分隔的知识库名称列表，不指定则搜索全部" }
+  },
+  "returns": { "type": "string", "description": "知识库检索结果" },
+  "stageUsage": ["stage-0", "stage-2", "stage-3"]
+}
