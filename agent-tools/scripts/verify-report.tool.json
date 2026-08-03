@@ -1,0 +1,18 @@
+{
+  "name": "verify-report",
+  "type": "script",
+  "category": "quality-gate",
+  "description": "验证最终报告 HTML 是否满足最小图表数量门禁要求",
+  "invocation": "node agent-tools/scripts/verify-report.mjs <报告文件.html> --min-total=<N> --min-advanced=<N> --min-multi=<N> --min-dim=<N>",
+  "parameters": {
+    "report_path": { "type": "string", "required": true, "description": "报告 HTML 路径" },
+    "min_total": { "type": "number", "required": true, "description": "最小总图表数" },
+    "min_advanced": { "type": "number", "required": true, "description": "最小高级图表数" },
+    "min_multi": { "type": "number", "required": true, "description": "最小多维图表数" },
+    "min_dim": { "type": "number", "required": true, "description": "最小维度覆盖数" }
+  },
+  "returns": { "type": "object", "description": "报告质量门禁检查结果" },
+  "exitCodes": { "0": "所有门禁通过", "1": "至少一项不达标 → 需补充图表" },
+  "mandatory": true,
+  "stageUsage": ["stage-7b"]
+}
