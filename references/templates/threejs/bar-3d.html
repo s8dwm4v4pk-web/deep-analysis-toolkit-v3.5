@@ -1,0 +1,81 @@
+<!--
+  模板: 3D 柱状图 (3D bar chart)
+  引擎: Three.js
+  数据形态: S17 3D 数值（二维网格立体柱状）
+  DOM ID: chart-bar-3d
+  说明: 二维类别网格 × 高度 = 三维柱状图，适合双分类变量 + 数值展示
+  前置: HTML 需内联 three.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-bar-3d');
+  const width = dom.clientWidth || 800;
+  const height = 500;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1e293b);
+  const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera.position.set(10, 8, 14);
+  camera.lookAt(2, 2, 2);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  dom.appendChild(renderer.domElement);
+  // 光源
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(8, 15, 10);
+  scene.add(dirLight);
+  // 地面网格
+  const gridHelper = new THREE.GridHelper(10, 10, 0x334155, 0x1e293b);
+  gridHelper.position.y = -0.01;
+  scene.add(gridHelper);
+  // 数据：4 类别 × 3 子类的网格
+  const rows = 3, cols = 4;
+  const rawData = [
+    [3.5, 5.2, 2.1, 4.8],
+    [2.8, 4.1, 3.5, 1.9],
+    [4.2, 2.5, 5.0, 3.3]
+  ];
+  const maxVal = Math.max(...rawData.flat());
+  const colors = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
+  const barW = 0.7, gap = 1.2, baseY = 0;
+  rawData.forEach((row, ri) => {
+    row.forEach((val, ci) => {
+      const h = val;
+      const geometry = new THREE.BoxGeometry(barW, h, barW);
+      const material = new THREE.MeshPhongMaterial({ color: colors[ci], specular: 0x222222, shininess: 30 });
+      const bar = new THREE.Mesh(geometry, material);
+      bar.position.set(ci * gap, h / 2, ri * gap);
+      bar.castShadow = true;
+      scene.add(bar);
+      // 柱顶标签（用精灵或简单线框标记）
+      const edgeGeo = new THREE.EdgesGeometry(geometry);
+      const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 });
+      const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+      bar.add(edges);
+    });
+  });
+  function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+  animate();
+  // 简易旋转
+  let isDragging = false, prevX = 0, prevY = 0;
+  renderer.domElement.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+  renderer.domElement.addEventListener('mouseup', () => { isDragging = false; });
+  renderer.domElement.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    camera.position.x += (e.clientX - prevX) * 0.05;
+    camera.position.y -= (e.clientY - prevY) * 0.05;
+    camera.lookAt(cols / 2 * gap, maxVal / 2, rows / 2 * gap);
+    prevX = e.clientX; prevY = e.clientY;
+  });
+  renderer.domElement.addEventListener('wheel', e => {
+    camera.position.z += e.deltaY * 0.02;
+    camera.position.z = Math.max(5, Math.min(30, camera.position.z));
+    e.preventDefault();
+  });
+  window.addEventListener('resize', () => {
+    const w = dom.clientWidth || 800;
+    camera.aspect = w / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, height);
+  });
+})();
