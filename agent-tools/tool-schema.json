@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://deep-analysis-toolkit-v3/agent-tools/tool-schema.json",
+  "title": "Agent Tool Definition Schema",
+  "description": "deep-analysis-toolkit-v3 统一工具接口定义规范，适配任何 Agent 平台对接",
+  "type": "object",
+  "required": ["name", "type", "category", "description", "parameters", "stageUsage"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "工具唯一标识名称，与调用名一致"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["platform", "script"],
+      "description": "工具类型：platform=平台原生工具 / script=Node.js 脚本"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["io", "interaction", "knowledge", "meta", "validation", "processing", "post-processing", "assembly", "quality-gate"],
+      "description": "工具功能分类"
+    },
+    "description": {
+      "type": "string",
+      "description": "工具用途的中文描述"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "参数定义映射，键为参数名，值为 {type, required, description} 对象"
+    },
+    "returns": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "description": "返回值类型" },
+        "description": { "type": "string", "description": "返回值说明" }
+      }
+    },
+    "invocation": {
+      "type": "string",
+      "description": "仅 type=script 时有效，Node.js 调用命令，如 node agent-tools/scripts/xxx.mjs"
+    },
+    "exitCodes": {
+      "type": "object",
+      "description": "仅 type=script 时有效，退出码映射说明"
+    },
+    "mandatory": {
+      "type": "boolean",
+      "description": "仅 type=script 时有效，是否为强制校验节点（exit≠0 则 HALT）"
+    },
+    "stageUsage": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "该工具在哪些阶段被调用"
+    }
+  }
+}
