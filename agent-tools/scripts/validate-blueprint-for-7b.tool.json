@@ -1,0 +1,16 @@
+{
+  "name": "validate-blueprint-for-7b",
+  "type": "script",
+  "category": "gate",
+  "description": "7b HTML 生成前蓝图门禁：校验 narrative-blueprint.md 的图表清单完整性、数据引用一致性、chart_id 唯一性、模板变量全部解析、所需章节齐全。此脚本化 7b 原有 7 项人工检查规则，防止蓝图缺陷导致 HTML 生成失败。",
+  "invocation": "node agent-tools/scripts/validate-blueprint-for-7b.mjs <blueprint.md路径> <analysis-state.md路径> [--json]",
+  "parameters": {
+    "blueprint_path": { "type": "string", "required": true, "description": "narrative-blueprint.md 绝对或相对路径" },
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 路径（用于交叉验证数据引用）" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" }
+  },
+  "returns": { "type": "object", "description": "{ passed: boolean, issues: [{ category, rule, detail, severity }] }" },
+  "exitCodes": { "0": "蓝图门禁通过，可进入 7b HTML 生成", "1": "存在蓝图缺陷，需修复后再进入 7b" },
+  "mandatory": true,
+  "stageUsage": ["stage-6", "stage-7a"]
+}
