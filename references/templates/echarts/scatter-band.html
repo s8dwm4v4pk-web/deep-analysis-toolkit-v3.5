@@ -1,0 +1,41 @@
+<!--
+  模板: 散点 + 回归线 + 置信带 (scatter + regression + confidence band)
+  引擎: ECharts
+  数据形态: S5 双变量关系
+  DOM ID: chart-scatter-band
+  说明: 展示估计不确定性，需足够样本量支撑区间估计（默认 95% 置信带）
+-->
+(function() {
+  const dom = document.getElementById('chart-scatter-band');
+  const myChart = echarts.init(dom);
+  const scatterData = [[31, 1], [33, 0], [14, 0], [35, 0], [41, 3], [28, 2], [20, 0], [38, 1], [45, 4], [25, 1]];
+  const xs = scatterData.map(d => d[0]), ys = scatterData.map(d => d[1]);
+  const n = xs.length, xm = xs.reduce((a, b) => a + b, 0) / n, ym = ys.reduce((a, b) => a + b, 0) / n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++) { num += (xs[i] - xm) * (ys[i] - ym); den += (xs[i] - xm) ** 2; }
+  const slope = den ? num / den : 0, intercept = ym - slope * xm;
+  const residuals = scatterData.map(d => d[1] - (slope * d[0] + intercept));
+  const resStd = Math.sqrt(residuals.reduce((s, r) => s + r * r, 0) / (n - 2));
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const step = (xMax - xMin) / 50;
+  const bandHi = [], bandLo = [], regLine = [];
+  for (let x = xMin; x <= xMax; x += step) {
+    const y = slope * x + intercept;
+    regLine.push([x, y]);
+    bandHi.push([x, y + 1.96 * resStd]);
+    bandLo.push([x, y - 1.96 * resStd]);
+  }
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '12%' },
+    tooltip: { trigger: 'item', formatter: p => p.seriesName + '<br/>X: ' + p.value[0] + '<br/>Y: ' + p.value[1] },
+    xAxis: { type: 'value', name: 'X 轴' }, yAxis: { type: 'value', name: 'Y 轴' },
+    series: [
+      { type: 'line', name: '95%置信上界', data: bandHi, lineStyle: { type: 'dashed', color: 'transparent' }, areaStyle: { color: 'rgba(59,130,246,0.15)' }, symbol: 'none' },
+      { type: 'line', name: '95%置信下界', data: bandLo, lineStyle: { type: 'dashed', color: 'transparent' }, areaStyle: { color: '#fff' }, symbol: 'none' },
+      { type: 'line', name: '回归线', data: regLine, lineStyle: { color: '#ef4444', width: 2 }, symbol: 'none' },
+      { type: 'scatter', name: '数据点', data: scatterData, symbolSize: 14, itemStyle: { color: '#3b82f6' } }
+    ],
+    legend: { data: ['数据点', '回归线', '95%置信带'], bottom: 0 }
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
