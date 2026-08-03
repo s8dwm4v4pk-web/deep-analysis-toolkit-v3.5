@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>deep-analysis-toolkit V3.5 — 分析工作流程图</title>
+<style>
+  :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --accent2: #a78bfa; --accent3: #34d399; --warn: #fbbf24; --danger: #f87171; --text: #e2e8f0; --sub: #94a3b8; --border: #334155; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "PingFang SC","Microsoft YaHei",sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; min-height: 100vh; }
+  h1 { font-size: 28px; margin-bottom: 6px; letter-spacing: 0.5px; }
+  h1 span { color: var(--accent); }
+  .subtitle { color: var(--sub); font-size: 14px; margin-bottom: 40px; }
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 900px; width: 100%; }
+  .step { display: flex; align-items: flex-start; gap: 16px; width: 100%; }
+  .step-num { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+  .step-num.pre { background: rgba(251,191,36,0.2); color: var(--warn); border: 2px solid rgba(251,191,36,0.4); }
+  .step-num.L1 { background: rgba(56,189,248,0.2); color: var(--accent); border: 2px solid rgba(56,189,248,0.4); }
+  .step-num.L2 { background: rgba(167,139,250,0.2); color: var(--accent2); border: 2px solid rgba(167,139,250,0.4); }
+  .step-num.L3 { background: rgba(52,211,153,0.2); color: var(--accent3); border: 2px solid rgba(52,211,153,0.4); }
+  .step-num.L4 { background: rgba(248,113,113,0.2); color: var(--danger); border: 2px solid rgba(248,113,113,0.4); }
+  .step-num.expr { background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+  .step-body { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; flex: 1; }
+  .step-body h3 { font-size: 15px; margin-bottom: 4px; }
+  .step-body .desc { font-size: 12px; color: var(--sub); line-height: 1.6; }
+  .step-body .badge-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .badge { font-size: 10px; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
+  .badge.engine { background: rgba(52,211,153,0.15); color: var(--accent3); }
+  .badge.io { background: rgba(56,189,248,0.12); color: var(--accent); }
+  .badge.warn { background: rgba(251,191,36,0.12); color: var(--warn); }
+  .badge.gate { background: rgba(248,113,113,0.12); color: var(--danger); }
+  .badge.safety { background: rgba(167,139,250,0.12); color: var(--accent2); }
+  .connector { display: flex; align-items: center; gap: 0; padding-left: 24px; height: 34px; }
+  .connector .v-line { width: 2px; height: 100%; background: var(--border); }
+  .connector .arrow-head { width: 0; height: 0; border-left: 6px solid var(--border); border-top: 4px solid transparent; border-bottom: 4px solid transparent; transform: rotate(90deg); margin-left: -4px; }
+  .connector .c-label { font-size: 10px; color: var(--sub); margin-left: 10px; }
+  .branch { display: flex; width: 100%; gap: 12px; padding-left: 24px; }
+  .branch .b-path { flex: 1; background: var(--card); border: 1px dashed var(--border); border-radius: 10px; padding: 14px 16px; }
+  .branch .b-path h4 { font-size: 13px; margin-bottom: 6px; }
+  .branch .b-path .desc { font-size: 11px; color: var(--sub); line-height: 1.5; }
+  .branch .b-or { display: flex; align-items: center; color: var(--sub); font-size: 11px; font-weight: 700; padding: 0 4px; }
+  .merge-line { display: flex; padding-left: 24px; height: 26px; align-items: center; }
+  .merge-line .m-symbol { font-size: 11px; color: var(--sub); }
+  .merge-line .v-line { width: 2px; height: 100%; background: var(--border); margin-right: 8px; }
+  .flow-section { width: 100%; text-align: center; padding: 12px 0; margin: 8px 0; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 12px; color: var(--sub); letter-spacing: 2px; }
+  .split-row { display: flex; width: 100%; gap: 12px; }
+  .split-row .step { flex: 1; min-width: 0; }
+  .split-connector { display: flex; width: 100%; padding-left: 24px; gap: 12px; }
+  .split-connector .s-line { flex: 1; display: flex; align-items: center; }
+  .split-connector .s-line .v { width: 2px; height: 28px; background: var(--border); }
+  .pause-banner { width: 100%; padding: 8px 16px; background: rgba(251,191,36,0.08); border: 1px dashed rgba(251,191,36,0.4); border-radius: 8px; text-align: center; font-size: 11px; color: var(--warn); margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>deep-analysis-toolkit <span>V3.5</span> — 分析工作流程图</h1>
+<p class="subtitle">10 阶段全流程（Stage 0 前置问答 + 9 个分析阶段）· 四层认知递进 · 从数据到报告的完整链路</p>
+
+<div class="flow">
+
+  <!-- Pre: Q&A -->
+  <div class="flow-section">━━━ 前置交互 ━━━</div>
+  <div class="step">
+    <div class="step-num pre">0</div>
+    <div class="step-body">
+      <h3>Stage 0：前置问答 · 参数收集</h3>
+      <div class="desc">两批 ask_followup_question 收集 P0/P6/P7 + P8/封面标题 → P1-P5 使用系统默认值 → 写入 analysis-state-s1.md「分析参数」章节</div>
+      <div class="badge-row">
+        <span class="badge io">用户交互</span>
+        <span class="badge warn">参数固化</span>
+        <span class="badge engine">V3.5</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">参数写入 analysis-state-s1.md → generate-handoff 生成 s1-handoff.md → 不再回问</span></div>
+
+  <!-- L1: 事实层 -->
+  <div class="flow-section">━━━ L1 事实层："发生了什么" ━━━</div>
+
+  <!-- 阶段 1 -->
+  <div class="step">
+    <div class="step-num L1">1</div>
+    <div class="step-body">
+      <h3>阶段 1：数据基座构建</h3>
+      <div class="desc">创建隔离目录 → 计算 data_hash → D 编号体系 → 5 项勾稽校验（脚本接管 R1-R5）→ 数据形态归类（S1-S17）→ 质量评级（A/B/C/D）→ 冻结为唯一数字来源</div>
+      <div class="badge-row">
+        <span class="badge io">输入：源数据文件</span>
+        <span class="badge io">输出：D 编号 + 勾稽记录</span>
+        <span class="badge gate">D 级 → 中断询问</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">数据冻结 · 后续引用必须通过 D-xxx · 生成 s1-handoff.md</span></div>
+
+  <!-- 阶段 2: Engine Routing -->
+  <div class="step">
+    <div class="step-num L1">2</div>
+    <div class="step-body">
+      <h3>阶段 2：维度扫描与信号筛选 <span class="badge engine" style="margin-left:6px;">P0 引擎路由</span></h3>
+      <div class="desc">根据 P0 参数选择引擎路径，产出 O→V→S 三层穿透信号 + 极高/高/中优先级矩阵</div>
+    </div>
+  </div>
+
+  <div class="branch">
+    <div class="b-path">
+      <h4 style="color:var(--accent3);">路径 A：多Agent并行扫描（深度分析）</h4>
+      <div class="desc">
+        7 维度 Scout 并行执行 → 7×7 冲突矩阵 → 盲区聚合 → 置信度交叉校准<br>
+        适用：大数据量 · 全功能并行
+      </div>
+      <div class="badge-row" style="margin-top:6px;">
+        <span class="badge engine">02-multi-dim-scan.md</span>
+      </div>
+    </div>
+    <div class="b-or">OR</div>
+    <div class="b-path">
+      <h4 style="color:var(--accent2);">路径 B：认知循环串行扫描（轻量分析）</h4>
+      <div class="desc">
+        7 维度顺序扫描 → 基础交叉验证（3 项）<br>
+        适用：中小数据量 · 快速探索
+      </div>
+      <div class="badge-row" style="margin-top:6px;">
+        <span class="badge engine">02-cognitive-scan.md</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="merge-line"><div class="v-line"></div><div class="m-symbol">两条路径统一汇入阶段 3 · 各自生成 s2-handoff.md（后续 state-query 切片续读）</div></div>
+
+  <!-- L2: 解释层 -->
+  <div class="flow-section">━━━ L2 解释层："为什么会这样" ━━━</div>
+
+  <!-- 阶段 3 -->
+  <div class="step">
+    <div class="step-num L2">3</div>
+    <div class="step-body" style="border-left:3px solid var(--accent2);">
+      <h3 style="color:var(--accent2);">阶段 3：深度归因 — 假说穷举 + 证据检验</h3>
+      <div class="desc">对每条 S-xxx 信号：穷举 ≥3 种假说 → 三级证据检验（支持/部分支持/不支持）→ 近因→远因→结构因归因链 → 诚实标注残余未解释 → 逐假说收敛判断</div>
+      <div class="badge-row">
+        <span class="badge gate">P1 收敛检测（默认 67%）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">生成 s3-handoff.md · validate-o-v-s-chain 穿透链校验</span></div>
+
+  <!-- 阶段 3b -->
+  <div class="step">
+    <div class="step-num L2">3b</div>
+    <div class="step-body">
+      <h3>阶段 3b：Safety Lifecycle 安全评估 <span class="badge safety" style="margin-left:6px;">V3.4</span></h3>
+      <div class="desc">安全演化阶段判定（初始期/建设期/成熟期/优化期）→ 五维评分（制度化/数据成熟度/风险意识/改善能力/文化建设）→ 脆弱性扫描 → 阶段跃迁触发条件分析</div>
+      <div class="badge-row">
+        <span class="badge safety">安全演化理论</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">生成 s3b-handoff.md</span></div>
+
+  <!-- L3: 预判层 -->
+  <div class="flow-section">━━━ L3 预判层："接下来会怎样" ━━━</div>
+
+  <!-- 阶段 4 -->
+  <div class="step">
+    <div class="step-num L3">4</div>
+    <div class="step-body">
+      <h3>阶段 4：情景预判</h3>
+      <div class="desc">识别关键不确定变量 → 构建情景空间（≥2 种情景）→ 反事实推断 → 置信度评级 → 效应量化 → 最可能路径标注</div>
+      <div class="badge-row">
+        <span class="badge gate">P2 收敛检测（默认 &lt; 2 个）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">生成 s4-handoff.md</span></div>
+
+  <!-- L4: 决断层 -->
+  <div class="flow-section">━━━ L4 决断层："应该怎么做" ━━━</div>
+
+  <!-- 阶段 5 -->
+  <div class="step">
+    <div class="step-num L4">5</div>
+    <div class="step-body">
+      <h3>阶段 5：决策建议 — 四层分层</h3>
+      <div class="desc">🔴 紧急处置 → 🟡 短期布局 → 🟢 中期调整 → 📋 制度建设 · 每条建议可追溯至 D/V/S 编号</div>
+      <div class="badge-row">
+        <span class="badge gate">P3 收敛检测（默认 K=3）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">生成 s5-handoff.md</span></div>
+
+  <!-- 阶段 5→6 合并 -->
+  <div class="step">
+    <div class="step-num pre">M</div>
+    <div class="step-body">
+      <h3>阶段 5→6 合并 <span class="badge engine" style="margin-left:6px;">V3.5</span></h3>
+      <div class="desc">merge-analysis-state.py 确定性合并 analysis-state-s1..s5(+3b) → analysis-state.md（仅脚本审计用，不参与阶段间交接）</div>
+      <div class="badge-row">
+        <span class="badge engine">merge-analysis-state.py</span>
+        <span class="badge warn">仅审计</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div></div>
+
+  <!-- 阶段 6 -->
+  <div class="step">
+    <div class="step-num L4">6</div>
+    <div class="step-body">
+      <h3>阶段 6：叙事规划</h3>
+      <div class="desc">叙事主线提炼 → 动态章节决策（不使用固定模板）→ 图表需求清单（按 P7 阈值约束）→ match-chart-templates.mjs 模板匹配 → 主题/引擎选型</div>
+      <div class="badge-row">
+        <span class="badge gate">validate-blueprint-for-7b 蓝图门禁（7 项规则）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">生成 s6-handoff.md · state-query 定向切片</span></div>
+
+  <!-- 表达层 -->
+  <div class="flow-section">━━━ 表达层：从叙事到 HTML ━━━</div>
+
+  <!-- 阶段 7a + 断点 -->
+  <div class="step">
+    <div class="step-num expr">7a</div>
+    <div class="step-body">
+      <h3>阶段 7a：叙事组装 → blueprint.md <span class="badge engine" style="margin-left:6px;">V3.4 拆分</span></h3>
+      <div class="desc">仅读 s6-handoff.md 摘要 + state-query 定向切片 → 上下文就绪检查（12 字段逐一判定）→ D 编号追溯校验 → 撰写全部章节正文 + 图表解读 + 假说验证表 + Safety Lifecycle + 四层建议 + 质量/局限性声明 → 写入 blueprint.md</div>
+      <div class="badge-row">
+        <span class="badge io">输出：blueprint.md（纯 Markdown 叙事蓝图）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pause-banner">
+    ⏸️ 人工终审断点 — 用户可审阅/编辑 blueprint.md 后确认继续
+  </div>
+
+  <div class="connector"><div class="v-line"></div></div>
+
+  <!-- 阶段 7b -->
+  <div class="step">
+    <div class="step-num expr">7b</div>
+    <div class="step-body">
+      <h3>阶段 7b：HTML 报告生成</h3>
+      <div class="desc">Link-then-Inline 模式：读取主题 CSS（&lt;link&gt;）→ Vendor 库（&lt;script src&gt;）→ 图表 IIFE 内联 → assemble-report.mjs 组装 → verify-report.mjs 质量闸门 → 后处理管线（6 脚本）→ 输出 report.html</div>
+      <div class="badge-row">
+        <span class="badge engine">3MB 全内联 · 零外部依赖</span>
+        <span class="badge gate">硬闸门验收</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="v-line"></div><span class="c-label">质量闸门通过 → 交付</span></div>
+
+  <!-- Final -->
+  <div class="step">
+    <div class="step-num expr" style="background:rgba(52,211,153,0.2);color:var(--accent3);border-color:rgba(52,211,153,0.4);">✓</div>
+    <div class="step-body" style="background:rgba(52,211,153,0.06);border-color:rgba(52,211,153,0.3);">
+      <h3 style="color:var(--accent3);">最终交付</h3>
+      <div class="desc">自包含单文件 HTML 报告 → 存放于任务子目录 → 可追溯（D/V/S 三级编号）· 可审计（analysis-state.md 全记录）· 可恢复（.analysis-session 锚点）</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
