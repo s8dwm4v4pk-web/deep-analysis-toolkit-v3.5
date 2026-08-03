@@ -1,0 +1,29 @@
+<!--
+  模板: 象形柱图 (pictorial bar)
+  引擎: ECharts
+  数据形态: S1 一维数组
+  DOM ID: chart-pict-bar
+  说明: 用 SVG 图标填充柱状，增强情感传达，适合展示有象形语义的数值
+-->
+(function() {
+  const dom = document.getElementById('chart-pict-bar');
+  const myChart = echarts.init(dom);
+  const categories = ['类别A', '类别B', '类别C', '类别D', '类别E'];
+  const values = [85, 72, 63, 58, 45];
+  const maxVal = Math.max(...values);
+  // 通用菱形符号（可用实际 SVG path 替换）
+  const diamond = 'path://M5 0 L10 5 L5 10 L0 5 Z';
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '8%', bottom: '12%' },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: categories },
+    yAxis: { type: 'value', max: maxVal * 1.2, name: '数值' },
+    series: [{
+      type: 'pictorialBar', data: values,
+      symbol: diamond, symbolSize: [30, 18], symbolRepeat: true,
+      symbolMargin: 4, symbolClip: true,
+      itemStyle: { color: '#3b82f6' }
+    }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
