@@ -1,0 +1,53 @@
+<!--
+  模板: 函数曲线 (function curve)
+  引擎: D3 v7
+  数据形态: S4 已知函数形式
+  DOM ID: chart-func-curve
+  说明: 对已知函数 f(x) 采样后绘制曲线，适合展示理论模型/拟合函数/数学关系
+  前置: HTML 需内联 d3.v7.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-func-curve');
+  const width = dom.clientWidth || 800;
+  const height = 400;
+  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  // 采样：可替换为任意 f(x)
+  const xRange = [0, 10];
+  const samples = [];
+  const n = 200;
+  const f = x => Math.sin(x) * 3 + Math.cos(x * 2) * 1.5 + x * 0.3;
+  for (let i = 0; i <= n; i++) {
+    const x = xRange[0] + (xRange[1] - xRange[0]) * i / n;
+    samples.push({ x, y: f(x) });
+  }
+  const xScale = d3.scaleLinear().domain(xRange).range([0, innerW]);
+  const yExtent = d3.extent(samples, d => d.y);
+  const yPad = (yExtent[1] - yExtent[0]) * 0.1;
+  const yScale = d3.scaleLinear().domain([yExtent[0] - yPad, yExtent[1] + yPad]).range([innerH, 0]);
+  const svg = d3.select(dom).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  g.append('g').call(d3.axisBottom(xScale)).attr('transform', `translate(0,${innerH})`);
+  g.append('g').call(d3.axisLeft(yScale));
+  g.append('text').attr('x', innerW / 2).attr('y', innerH + 35).attr('text-anchor', 'middle').text('X');
+  g.append('text').attr('transform', 'rotate(-90)').attr('x', -innerH / 2).attr('y', -40).attr('text-anchor', 'middle').text('f(X)');
+  // 零线
+  if (yExtent[0] < 0 && yExtent[1] > 0) {
+    g.append('line').attr('x1', 0).attr('y1', yScale(0)).attr('x2', innerW).attr('y2', yScale(0))
+      .attr('stroke', '#cbd5e1').attr('stroke-dasharray', '4,4');
+  }
+  // 曲线
+  const lineGen = d3.line().x(d => xScale(d.x)).y(d => yScale(d.y)).curve(d3.curveMonotoneX);
+  g.append('path').datum(samples)
+    .attr('d', lineGen).attr('fill', 'none').attr('stroke', '#3b82f6').attr('stroke-width', 2.5);
+  // 面积填充（正半轴）
+  const areaGen = d3.area().x(d => xScale(d.x)).y0(yScale(0)).y1(d => yScale(d.y)).curve(d3.curveMonotoneX);
+  g.append('path').datum(samples)
+    .attr('d', areaGen).attr('fill', '#3b82f6').attr('fill-opacity', 0.08);
+  window.addEventListener('resize', () => {
+    const w = dom.clientWidth || 800;
+    svg.attr('width', w);
+    xScale.range([0, w - margin.left - margin.right]);
+  });
+})();
