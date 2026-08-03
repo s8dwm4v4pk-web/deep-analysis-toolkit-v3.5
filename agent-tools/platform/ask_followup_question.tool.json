@@ -1,0 +1,12 @@
+{
+  "name": "ask_followup_question",
+  "type": "platform",
+  "category": "interaction",
+  "description": "向用户发起结构化多选问答，收集分析参数",
+  "parameters": {
+    "questions": { "type": "string", "required": true, "description": "JSON 数组格式的问题列表，每项含 question/header/options/multiSelect 字段" },
+    "title": { "type": "string", "required": false, "description": "问题表单标题" }
+  },
+  "returns": { "type": "object", "description": "用户选择的结果映射" },
+  "stageUsage": ["stage-0"]
+}
