@@ -1,0 +1,12 @@
+{
+  "name": "validate-session",
+  "type": "script",
+  "category": "validation",
+  "description": "校验 .analysis-session 会话目录结构完整性，缺少必要文件则报错",
+  "invocation": "node agent-tools/scripts/validate-session.mjs",
+  "parameters": {},
+  "returns": { "type": "object", "description": "JSON 格式的会话结构校验结果" },
+  "exitCodes": { "0": "会话结构完整，校验通过", "1": "缺少必要目录/文件 → HALT" },
+  "mandatory": true,
+  "stageUsage": ["stage-1", "all"]
+}
