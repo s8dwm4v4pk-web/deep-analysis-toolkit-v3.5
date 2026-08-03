@@ -1,0 +1,12 @@
+{
+  "name": "preview_url",
+  "type": "platform",
+  "category": "interaction",
+  "description": "在 IDE 内置浏览器中预览 HTTP/HTTPS URL",
+  "parameters": {
+    "url": { "type": "string", "required": true, "description": "完整的 HTTP/HTTPS URL，不支持 file:// 路径" },
+    "explanation": { "type": "string", "required": false, "description": "预览原因说明" }
+  },
+  "returns": { "type": "void", "description": "无返回值，触发浏览器预览" },
+  "stageUsage": ["stage-7b"]
+}
