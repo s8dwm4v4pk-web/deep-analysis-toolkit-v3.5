@@ -1,0 +1,28 @@
+<!--
+  模板: 散点图 + 回归线 (scatter + regression)
+  引擎: ECharts
+  数据形态: S5 双变量关系
+  DOM ID: chart-scatter
+  说明: 散点 + OLS 线性回归线，适合量化两连续变量的相关方向和强度
+-->
+(function() {
+  const dom = document.getElementById('chart-scatter');
+  const myChart = echarts.init(dom);
+  const scatterData = [[31, 1], [33, 0], [14, 0], [35, 0], [41, 3]];
+  const xs = scatterData.map(d => d[0]), ys = scatterData.map(d => d[1]);
+  const n = xs.length, xm = xs.reduce((a, b) => a + b, 0) / n, ym = ys.reduce((a, b) => a + b, 0) / n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++) { num += (xs[i] - xm) * (ys[i] - ym); den += (xs[i] - xm) ** 2; }
+  const slope = den ? num / den : 0, intercept = ym - slope * xm;
+  const x1 = Math.min(...xs), x2 = Math.max(...xs);
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '12%' },
+    tooltip: { trigger: 'item', formatter: p => p.seriesName + '<br/>X: ' + p.value[0] + '<br/>Y: ' + p.value[1] },
+    xAxis: { type: 'value', name: 'X 轴' }, yAxis: { type: 'value', name: 'Y 轴' },
+    series: [
+      { type: 'scatter', data: scatterData, symbolSize: 16, name: '数据点' },
+      { type: 'line', name: '回归线', data: [[x1, slope * x1 + intercept], [x2, slope * x2 + intercept]], lineStyle: { type: 'dashed', color: '#f59e0b' }, symbol: 'none' }
+    ]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
