@@ -1,0 +1,57 @@
+<!--
+  模板: 等值区域图 (choropleth)
+  引擎: D3 v7
+  数据形态: S16 空间/地理
+  DOM ID: chart-choropleth
+  说明: 将数值映射到地理区域颜色，需 topojson 地理数据 + GeoJSON
+  前置: HTML 需内联 d3.v7.min.js
+  注: 此模板展示框架，实际使用时需提供 GeoJSON 区域数据和指标映射表
+-->
+(function() {
+  const dom = document.getElementById('chart-choropleth');
+  const width = dom.clientWidth || 800;
+  const height = 500;
+  // 模拟中国省份简化的 GeoJSON（实际使用需替换为真实行政区划数据）
+  const geoData = {
+    type: 'FeatureCollection',
+    features: [
+      { type: 'Feature', properties: { name: '区域A', value: 78 }, geometry: { type: 'Polygon', coordinates: [[[0,0],[80,0],[80,60],[0,60],[0,0]]] } },
+      { type: 'Feature', properties: { name: '区域B', value: 45 }, geometry: { type: 'Polygon', coordinates: [[[80,0],[200,0],[200,55],[80,55],[80,0]]] } },
+      { type: 'Feature', properties: { name: '区域C', value: 92 }, geometry: { type: 'Polygon', coordinates: [[[200,0],[300,0],[300,65],[200,65],[200,0]]] } },
+      { type: 'Feature', properties: { name: '区域D', value: 33 }, geometry: { type: 'Polygon', coordinates: [[[0,60],[80,60],[80,120],[0,120],[0,60]]] } },
+      { type: 'Feature', properties: { name: '区域E', value: 60 }, geometry: { type: 'Polygon', coordinates: [[[80,55],[200,55],[200,125],[80,125],[80,55]]] } },
+      { type: 'Feature', properties: { name: '区域F', value: 85 }, geometry: { type: 'Polygon', coordinates: [[[200,65],[300,65],[300,130],[200,130],[200,65]]] } }
+    ]
+  };
+  const values = geoData.features.map(f => f.properties.value);
+  const colorScale = d3.scaleSequential(d3.interpolateBlues).domain([0, 100]);
+  const svg = d3.select(dom).append('svg').attr('width', width).attr('height', height);
+  const projection = d3.geoIdentity().reflectY(false).fitSize([width - 20, height - 20], geoData);
+  const pathGen = d3.geoPath(projection);
+  const g = svg.append('g').attr('transform', 'translate(10,10)');
+  // 区域
+  g.selectAll('path').data(geoData.features).join('path')
+    .attr('d', pathGen)
+    .attr('fill', d => colorScale(d.properties.value))
+    .attr('stroke', '#fff').attr('stroke-width', 1.5);
+  // 标注
+  g.selectAll('text').data(geoData.features).join('text')
+    .attr('transform', d => `translate(${pathGen.centroid(d)})`)
+    .attr('text-anchor', 'middle').attr('font-size', 11)
+    .text(d => d.properties.name + '\n' + d.properties.value);
+  // 图例
+  const legendW = 200, legendH = 15;
+  const legend = svg.append('g').attr('transform', `translate(${width - legendW - 20},${height - 40})`);
+  const legendScale = d3.scaleLinear().domain([0, 100]).range([0, legendW]);
+  const legendAxis = d3.axisBottom(legendScale).ticks(5).tickFormat(d => d);
+  const gradientData = d3.range(0, 1.01, 0.01).map(t => ({ t, color: colorScale(t * 100) }));
+  legend.selectAll('rect').data(gradientData).join('rect')
+    .attr('x', d => legendScale(d.t * 100)).attr('y', 0)
+    .attr('width', legendW / gradientData.length + 1).attr('height', legendH)
+    .attr('fill', d => d.color);
+  legend.append('g').call(legendAxis).attr('transform', `translate(0,${legendH})`);
+  window.addEventListener('resize', () => {
+    const w = dom.clientWidth || 800;
+    svg.attr('width', w);
+  });
+})();
