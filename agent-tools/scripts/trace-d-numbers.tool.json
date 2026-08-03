@@ -1,0 +1,17 @@
+{
+  "name": "trace-d-numbers",
+  "type": "script",
+  "category": "validation",
+  "description": "全流程 D 编号追溯性交叉校验：在每个阶段（2→7a）结束时，检查 analysis-state.md 中所有 D-xxx 编号是否被至少一条 O/V/S 引用，验证 O→V→S 链的 D 编号可追溯性。阶段 2 产出 O 编号后即可执行首轮校验，后续每阶段增量检查新增引用。覆盖率阈值 90%。",
+  "invocation": "node agent-tools/scripts/trace-d-numbers.mjs <analysis-state.md> [blueprint.md] [other.md...] [--json] [--verbose]",
+  "parameters": {
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 路径（主追踪源）" },
+    "other_files": { "type": "array", "required": false, "description": "额外要追踪的 md 文件路径列表" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "verbose": { "type": "boolean", "required": false, "description": "输出详细追踪日志" }
+  },
+  "returns": { "type": "object", "description": "{ total_d_numbers, referenced, orphaned, coverage_rate } —— 包含每个 D-xxx 的来源文件、关联的 O/V/S 编号列表、引用差异报告" },
+  "exitCodes": { "0": "覆盖率 ≥ 90% 且无孤儿 D 编号", "1": "覆盖率 < 90% 或存在孤儿 D 编号" },
+  "mandatory": true,
+  "stageUsage": ["stage-2", "stage-3", "stage-4", "stage-5", "stage-6", "stage-7a"]
+}
