@@ -1,0 +1,20 @@
+<!--
+  模板: 矩形树图 (treemap)
+  引擎: ECharts
+  数据形态: S6/S10 构成/层级
+  DOM ID: chart-treemap
+  说明: 同时编码层级和占比，同级分类数不宜过多（≤ 15）
+-->
+(function() {
+  const dom = document.getElementById('chart-treemap');
+  const myChart = echarts.init(dom);
+  const tmData = [
+    { name: '类别A', value: 60, children: [{ name: '子A1', value: 30 }, { name: '子A2', value: 30 }] },
+    { name: '类别B', value: 40, children: [{ name: '子B1', value: 20 }, { name: '子B2', value: 20 }] }
+  ];
+  myChart.setOption({
+    tooltip: { formatter: '{b}: {c}' },
+    series: [{ type: 'treemap', data: tmData, roam: false, upperLabel: { show: true, height: 30 }, label: { show: true, formatter: '{b}' }, levels: [{ itemStyle: { borderColor: '#fff', borderWidth: 2, gapWidth: 2 } }] }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
