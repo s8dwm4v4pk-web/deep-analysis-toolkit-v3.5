@@ -1,0 +1,18 @@
+{
+  "name": "state-query",
+  "type": "script",
+  "category": "state_handoff",
+  "description": "状态文件切片查询器（v3.5 轻量化核心）：从完整状态文件按字段/章节白名单定向提取内容，以 JSON 输出，替代整文件 read_file，是消灭上下文溢出的核心手段。",
+  "invocation": "node agent-tools/scripts/state-query.mjs <状态文件路径> --fields=D_DATASET,S_SIGNALS | --sections=数据基座,决策建议 [--max-lines=40] [--json] [--all]",
+  "parameters": {
+    "file": { "type": "string", "required": true, "description": "状态文件路径，如 {work_dir}/analysis-state-s1.md" },
+    "fields": { "type": "string", "required": false, "description": "逗号分隔的字段名白名单，如 D_DATASET,D_NUMBERS" },
+    "sections": { "type": "string", "required": false, "description": "逗号分隔的章节标题，如 数据基座,决策建议（含子章节）" },
+    "max-lines": { "type": "integer", "required": false, "description": "每字段/章节最大行数，默认 40" }
+  },
+  "returns": { "type": "json", "description": "{ ok, found{field:content}, missing[], sizes{}, truncated[], total_chars }" },
+  "exitCodes": { "0": "全部请求字段/章节找到", "1": "部分/全部缺失（LLM 应据此判断是否 HALT）", "2": "参数错误或文件不可读" },
+  "mandatory": true,
+  "dependency": "阶段 N 按需切片读取前序状态，禁止整文件读取",
+  "stageUsage": ["stage-2","stage-3","stage-3b","stage-4","stage-5","stage-6","stage-7a"]
+}
