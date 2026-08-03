@@ -1,0 +1,43 @@
+<!--
+  模板: 极地区域图 (polar area)
+  引擎: Chart.js
+  数据形态: S3 极简 / S6 构成占比（3-6 子类）
+  DOM ID: chart-polar-area
+  说明: 扇形角度均等、半径编码数值，适合展示 3-6 个子类相对最大值
+  前置: HTML 需内联 chart.js.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-polar-area');
+  const ctx = dom.getContext('2d');
+  new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+      labels: ['类别A', '类别B', '类别C', '类别D', '类别E'],
+      datasets: [{
+        data: [78, 65, 92, 45, 60],
+        backgroundColor: [
+          'rgba(59,130,246,0.6)', 'rgba(34,197,94,0.6)',
+          'rgba(245,158,11,0.6)', 'rgba(239,68,68,0.6)',
+          'rgba(168,85,247,0.6)'
+        ],
+        borderColor: [
+          'rgba(59,130,246,1)', 'rgba(34,197,94,1)',
+          'rgba(245,158,11,1)', 'rgba(239,68,68,1)',
+          'rgba(168,85,247,1)'
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw } }
+      },
+      scales: {
+        r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } }
+      }
+    }
+  });
+})();
