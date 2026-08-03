@@ -1,0 +1,42 @@
+<!--
+  模板: 子弹图 (bullet)
+  引擎: ECharts
+  数据形态: S3 极简 / S8 分级/阈值
+  DOM ID: chart-bullet
+  说明: 展示实际值 vs 目标值 + 分级区间，适合精确刻度读数，需目标值/区间参考线
+-->
+(function() {
+  const dom = document.getElementById('chart-bullet');
+  const myChart = echarts.init(dom);
+  const categories = ['指标A', '指标B', '指标C', '指标D'];
+  const actual = [78, 65, 92, 45];
+  const target = [80, 80, 80, 80];
+  const ranges = [
+    [0, 50, '#ef4444'], [50, 80, '#f59e0b'], [80, 100, '#22c55e']
+  ];
+  const series = [];
+  ranges.forEach((r, idx) => {
+    series.push({
+      type: 'bar', stack: 'range', barWidth: 20,
+      data: categories.map(() => r[1] - r[0]),
+      itemStyle: { color: r[2], borderColor: r[2] },
+      barGap: '-100%'
+    });
+  });
+  series.push({
+    type: 'bar', data: actual, barWidth: 12, z: 3,
+    itemStyle: { color: '#1e293b', borderColor: '#0f172a', borderWidth: 1 }
+  });
+  series.push({
+    type: 'scatter', data: target, symbol: 'rect', symbolSize: [4, 28],
+    itemStyle: { color: '#000' }, z: 4
+  });
+  myChart.setOption({
+    grid: { left: '18%', right: '8%', top: '8%', bottom: '10%' },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'value', min: 0, max: 100 },
+    yAxis: { type: 'category', data: categories },
+    series: series
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
