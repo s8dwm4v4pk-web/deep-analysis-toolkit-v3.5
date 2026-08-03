@@ -1,0 +1,15 @@
+{
+  "name": "hash-data",
+  "type": "script",
+  "category": "validation",
+  "description": "对输入数据文件计算 SHA-256 哈希，写入 .data-hash 用于后续完整性校验",
+  "invocation": "node agent-tools/scripts/hash-data.mjs <数据文件路径>",
+  "parameters": {
+    "data_path": { "type": "string", "required": true, "description": "待哈希的数据文件路径（CSV/JSON）" }
+  },
+  "returns": { "type": "string", "description": "SHA-256 哈希值，同时写入 .data-hash" },
+  "exitCodes": { "0": "哈希计算并写入成功", "1": "文件不存在或格式错误" },
+  "mandatory": true,
+  "dependency": "产出 data_hash 字段供 verify-data-hash.mjs 全流程校验",
+  "stageUsage": ["stage-1"]
+}
