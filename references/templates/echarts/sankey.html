@@ -1,0 +1,18 @@
+<!--
+  模板: 桑基图 (sankey)
+  引擎: ECharts
+  数据形态: S13 流程/转移
+  DOM ID: chart-sankey
+  说明: 流量/资源从源到目标的转移，流线宽度 = 流量大小
+-->
+(function() {
+  const dom = document.getElementById('chart-sankey');
+  const myChart = echarts.init(dom);
+  const nodes = [{ name: '源A' }, { name: '源B' }, { name: '中继1' }, { name: '目标1' }, { name: '目标2' }];
+  const links = [{ source: '源A', target: '中继1', value: 80 }, { source: '源B', target: '中继1', value: 30 }, { source: '中继1', target: '目标1', value: 70 }, { source: '中继1', target: '目标2', value: 40 }];
+  myChart.setOption({
+    tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+    series: [{ type: 'sankey', layout: 'none', emphasis: { focus: 'adjacency' }, nodeAlign: 'left', data: nodes, links: links, label: { show: true, position: 'right' }, lineStyle: { color: 'gradient', curveness: 0.5 } }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
