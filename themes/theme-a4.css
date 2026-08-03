@@ -1,0 +1,388 @@
+/* ============================================================
+   theme-a4.css — A4 分页版打印主题
+   融合两份用户精选 A4 报告的视觉精华
+   使用场景: A4 幅面 (210mm×297mm)、浅色背景、适合打印和公文流转
+   配套: 根 SKILL.md 参数 P6="A4分页版"
+   ============================================================ */
+
+/* ---- 打印设置 ---- */
+@page{size:A4;margin:20mm}
+@media print{
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{box-shadow:none;margin:0;break-after:page}
+}
+
+/* ---- 全局变量 ---- */
+:root{
+  --page-w:210mm;
+  --page-h:297mm;
+  --accent:#1a3c6d;
+  --accent2:#c0392b;
+  --accent3:#d4a017;
+  --ok:#1b7a3d;
+  --warn:#d4770a;
+  --danger:#c0392b;
+  --bg:#fafbfc;
+  --card-bg:#fff;
+  --text:#1a1a2e;
+  --text2:#54546d;
+  --text3:#888;
+  --border:#e0e0e0;
+  --shadow:0 2px 16px rgba(0,0,0,.06);
+  --cause-struct:#7c3aed;
+  --cause-far:#d97706;
+  --cause-near:#dc2626;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',-apple-system,sans-serif;
+  background:#d9d7d5;
+  color:var(--text);
+  line-height:1.78;
+  font-size:10pt;
+}
+
+/* ============================================================
+   PAGE — 页面容器
+   ============================================================ */
+.page{
+  width:var(--page-w);min-height:var(--page-h);
+  margin:24px auto;padding:22mm 18mm 20mm;
+  background:#fff;
+  box-shadow:var(--shadow);
+  break-after:page;
+  position:relative;
+}
+
+/* ============================================================
+   COVER — 封面页
+   ============================================================ */
+.page.cover{
+  background:linear-gradient(145deg,#0b1e3a 0%,#132d4f 30%,#1a3c6d 55%,#234e8a 80%,#1a3c6d 100%);
+  color:#fff;
+  display:flex;flex-direction:column;justify-content:space-between;align-items:center;
+  text-align:center;padding:25mm 15mm;
+}
+.page.cover::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity:0.4;
+}
+.page.cover .tag{
+  font-size:9pt;letter-spacing:6px;text-transform:uppercase;
+  margin-bottom:30px;opacity:.8;
+  border:1px solid rgba(255,255,255,.3);
+  padding:8px 28px;border-radius:2px;
+}
+.page.cover h1{
+  font-size:26pt;font-weight:800;letter-spacing:3px;
+  margin-bottom:16px;line-height:1.35;
+}
+.page.cover .sub{
+  font-size:11pt;opacity:.85;margin-bottom:40px;letter-spacing:2px;
+}
+.page.cover .meta{
+  font-size:8.5pt;opacity:.7;
+  display:flex;flex-direction:column;gap:6px;margin-top:40px;
+}
+/* 封面上下分区：上区 tag+标题居中，下区日期贴底 */
+.cover-top{
+  flex:1;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+.cover-date{
+  font-size:9pt;opacity:.7;letter-spacing:1px;
+  padding-bottom:10mm;
+}
+
+/* ============================================================
+   HEADINGS — 章节标题
+   ============================================================ */
+h2{
+  font-size:14pt;color:var(--accent);
+  margin:28px 0 14px;padding-bottom:8px;
+  border-bottom:2.5px solid var(--accent);
+  letter-spacing:1px;
+}
+h3{font-size:11.5pt;color:var(--accent);margin:18px 0 10px}
+h4{font-size:10.5pt;color:var(--text);margin:12px 0 6px;font-weight:700}
+
+/* 章节编号 */
+.chapter-num{
+  font-size:12px;color:var(--accent);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;
+}
+.chapter-title{
+  font-size:24px;font-weight:700;color:#0a1628;
+  margin-bottom:8px;padding-bottom:12px;
+  border-bottom:3px solid var(--accent);
+}
+.chapter-desc,.sec-desc{
+  color:var(--text2);font-style:italic;margin-bottom:12px;
+}
+
+/* ============================================================
+   KPI CARDS — 核心指标
+   ============================================================ */
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin:16px 0 22px;
+}
+.kpi-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:6px;padding:14px 12px;
+  text-align:center;box-shadow:var(--shadow);
+}
+.kpi-card .val{
+  font-size:22pt;font-weight:800;letter-spacing:-1px;line-height:1.2;
+}
+.kpi-card .val.red{color:var(--danger)}
+.kpi-card .val.green{color:var(--ok)}
+.kpi-card .val.amber{color:var(--warn)}
+.kpi-card .val.blue{color:var(--accent)}
+.kpi-card .lbl{font-size:7.5pt;color:var(--text2);margin-top:6px}
+.kpi-card .delta{font-size:7.5pt;margin-top:3px}
+.kpi-card .delta.down{color:var(--ok)}
+.kpi-card .delta.up{color:var(--danger)}
+.kpi-card .d-ref{font-size:7pt;color:var(--text3);margin-top:2px}
+
+/* ============================================================
+   图表容器
+   ============================================================ */
+.chart-box{width:100%;height:280px;margin:14px 0;overflow:visible}
+.chart-box.tall{height:340px}
+.chart-box.short{height:220px}
+.chart-box.xs{height:200px}
+[id^="chart-"]{overflow:visible}
+.chart-caption{
+  text-align:center;font-size:8pt;color:var(--text3);
+  margin-top:4px;margin-bottom:16px;font-style:italic;
+}
+
+/* ============================================================
+   TABLE — 表格
+   ============================================================ */
+.tbl-wrap{overflow-x:auto;margin:12px 0 16px}
+table{width:100%;border-collapse:collapse;font-size:8pt}
+th{
+  background:var(--accent);color:#fff;
+  padding:7px 8px;text-align:center;font-weight:600;
+  white-space:nowrap;letter-spacing:.5px;
+}
+td{padding:5px 8px;text-align:center;border:1px solid var(--border)}
+tr:nth-child(even) td{background:#f3f5f7}
+.highlight-row td{background:#fff3cd!important;font-weight:600}
+td .flag-red{color:var(--danger);font-weight:600}
+td .flag-green{color:var(--ok);font-weight:600}
+td .flag-amber{color:var(--warn);font-weight:600}
+
+/* ============================================================
+   TEXT — 文本样式
+   ============================================================ */
+p{margin:6px 0;text-align:justify;text-indent:2em}
+p.noid{text-indent:0}
+.emph{color:var(--danger);font-weight:700}
+.emph-g{color:var(--ok);font-weight:700}
+.emph-w{color:var(--warn);font-weight:700}
+.highlight{background:linear-gradient(transparent 60%,#ffeeba 60%);padding:0 2px}
+.footnote{font-size:7.5pt;color:var(--text2)}
+
+/* ---- 内联标签 ---- */
+.tag-sm{
+  display:inline-block;font-size:7pt;padding:2px 6px;
+  border-radius:3px;font-weight:700;margin-right:4px;
+}
+.tag-sm.danger{background:#fde8e8;color:var(--danger)}
+.tag-sm.warn{background:#fef3c7;color:#92400e}
+.tag-sm.ok{background:#d1fae5;color:#065f46}
+
+/* ---- 信号溯源标记 ---- */
+.signal-ref{
+  font-size:7pt;color:var(--text3);
+  background:#e8f0fe;padding:1px 5px;border-radius:3px;
+}
+
+/* ============================================================
+   CALLOUT — 信息框
+   ============================================================ */
+.callout{
+  background:#f0f4f8;border-left:4px solid var(--accent);
+  padding:10px 14px;margin:12px 0;
+  font-size:9pt;border-radius:0 4px 4px 0;
+}
+.callout.red{background:#fef2f2;border-left-color:var(--danger)}
+.callout.amber{background:#fffbeb;border-left-color:var(--warn)}
+
+/* ============================================================
+   归因链
+   ============================================================ */
+.cause-chain{
+  background:#f7f8fa;border:1px solid var(--border);
+  border-radius:6px;padding:14px 16px;
+  font-family:'Courier New','Microsoft YaHei',monospace;
+  font-size:9pt;line-height:2;margin:14px 0;
+  position:relative;
+}
+.cause-chain::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--cause-struct),var(--cause-far),var(--cause-near));
+  border-radius:3px 0 0 3px;
+}
+.c-struct{color:var(--cause-struct);font-weight:600}
+.c-far{color:var(--cause-far);font-weight:600}
+.c-near{color:var(--cause-near);font-weight:600}
+.c-arrow{color:var(--accent);font-size:14px}
+
+/* ============================================================
+   情景卡片
+   ============================================================ */
+.scenario-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10pt;
+  margin:12px 0;
+}
+.scenario-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:6px;padding:14px 16px;
+}
+.scenario-card h4{font-size:10pt;color:var(--accent);margin:0 0 6px}
+.scenario-card .confidence{
+  display:inline-block;padding:2px 8px;border-radius:3px;
+  font-size:8pt;font-weight:600;margin-bottom:6px;
+}
+.scenario-card .confidence.high{background:#d1fae5;color:#065f46}
+.scenario-card .confidence.medium{background:#fef3c7;color:#92400e}
+.scenario-card .confidence.low{background:#fdeaea;color:var(--danger)}
+.scenario-card p{font-size:9pt;color:var(--text2);text-indent:0}
+
+/* ============================================================
+   建议卡片
+   ============================================================ */
+.advice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10pt;margin:14px 0}
+.advice-card{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:0 4px 4px 0;padding:12px 14px;font-size:9pt;
+}
+.advice-card.urgent{border-left-color:var(--danger)}
+.advice-card.short{border-left-color:var(--warn)}
+.advice-card.mid{border-left-color:var(--ok)}
+.advice-card.structural{border-left-color:#7c3aed}
+.advice-card .advice-header{font-weight:700;color:var(--text);margin-bottom:4px}
+.advice-card .advice-body{color:var(--text2);line-height:1.6}
+.advice-card .advice-trace{font-size:7pt;color:var(--text3);margin-top:4px}
+
+/* ============================================================
+   预警盒子
+   ============================================================ */
+.alert-box{
+  background:#fef2f2;border:1px solid #fecaca;
+  border-radius:6px;padding:14px 18px;margin:14px 0;
+}
+.alert-box h4{color:var(--danger);margin-top:0;font-size:10pt}
+.alert-item{
+  padding:8px 0;border-bottom:1px solid #fee2e2;
+  font-size:9pt;
+}
+.alert-item:last-child{border-bottom:none}
+
+/* ============================================================
+   局限性声明
+   ============================================================ */
+.limitations{
+  border:1px solid #fbbf24;
+  background:#fffbeb;
+  border-left:3px solid var(--warn);
+  border-radius:0 4px 4px 0;padding:12px 16px;margin-top:16px;
+}
+.limitations h3{color:var(--warn)!important;font-size:10pt;margin-top:0}
+.limitations ul{padding-left:18px;color:var(--text2);font-size:9pt}
+.limitations li{margin-bottom:6px}
+
+/* ============================================================
+   页脚与页码
+   ============================================================ */
+.page-num{position:absolute;bottom:12mm;right:18mm;font-size:7.5pt;color:var(--text3)}
+.footer{
+  width:var(--page-w);margin:0 auto;
+  padding:10px 18mm;background:#f0f0f0;
+  font-size:8pt;color:var(--text3);
+  text-align:center;
+  line-height:1.7;
+}
+@media screen{.footer{margin-bottom:40px}}
+
+/* ============================================================
+   响应式降级
+   ============================================================ */
+@media(max-width:800px){
+  .page{width:auto;min-height:auto;margin:12px;padding:20px}
+  .page.cover{width:auto;height:auto;min-height:70vh}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .advice-grid{grid-template-columns:1fr}
+  .scenario-grid{grid-template-columns:1fr}
+}
+
+/* ============================================================
+   假说验证表格
+   ============================================================ */
+.hypothesis-table{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:6px;padding:14px 18px;margin:14px 0;
+}
+.hypothesis-table h3{font-size:10pt;color:var(--text);margin-top:0}
+.hypothesis-table .hypothesis-trace{
+  font-size:8pt;color:var(--text3);margin-bottom:10px;
+  padding:4px 8px;background:#f8f8f8;border-radius:4px;
+}
+.hypothesis-table table{width:100%;border-collapse:collapse;font-size:9pt}
+.hypothesis-table th{
+  text-align:left;padding:6px 8px;border-bottom:1.5px solid var(--border);
+  color:var(--text2);font-weight:600;font-size:8pt;text-transform:uppercase;
+}
+.hypothesis-table td{padding:8px;border-bottom:1px solid #f0f0f0;color:var(--text2)}
+.hypothesis-table tr.supported td:first-child{border-left:3px solid var(--ok)}
+.hypothesis-table tr.partial td:first-child{border-left:3px solid var(--warn)}
+.hypothesis-table tr.refuted td:first-child{border-left:3px solid var(--danger)}
+.hypothesis-table tr.uncertain td:first-child{border-left:3px solid var(--text3)}
+.hypothesis-table .status-badge{
+  display:inline-block;padding:1px 8px;border-radius:10px;
+  font-size:8pt;font-weight:700;
+}
+.hypothesis-table .status-badge.supported{background:#e6f7ee;color:var(--ok)}
+.hypothesis-table .status-badge.partial{background:#fef3e2;color:var(--warn)}
+.hypothesis-table .status-badge.refuted{background:#fdeaea;color:var(--danger)}
+.hypothesis-table .status-badge.uncertain{background:#f0f0f0;color:var(--text3)}
+
+/* ============================================================
+   Safety Lifecycle 阶段面板
+   ============================================================ */
+.lifecycle-stage{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:6px;padding:16px 20px;margin:14px 0;
+}
+.lifecycle-stage .stage-badge{
+  display:inline-block;padding:3px 14px;border-radius:14px;
+  font-size:10pt;font-weight:800;letter-spacing:.5px;
+  background:var(--accent);color:#fff;
+}
+.lifecycle-stage .stage-metrics{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  margin:12px 0;
+}
+.lifecycle-stage .stage-metric{
+  text-align:center;padding:8px 6px;background:#f8f8f8;
+  border-radius:4px;
+}
+.lifecycle-stage .stage-metric .metric-score{font-size:18pt;font-weight:900;color:var(--accent)}
+.lifecycle-stage .stage-metric .metric-label{font-size:7pt;color:var(--text3);margin-top:2px}
+.lifecycle-stage .vulnerability-list{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;
+}
+.lifecycle-stage .vulnerability-item{
+  padding:6px 10px;background:#fef2f2;
+  border-left:3px solid var(--danger);border-radius:0 4px 4px 0;
+  font-size:8pt;color:var(--text2);
+}
