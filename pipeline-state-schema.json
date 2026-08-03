@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TODO 编排运行时状态 Schema",
+  "description": "pipeline-state.json 的 JSON Schema 约束，确保 CODE 软件可以验证状态文件的合法性和完整性",
+  "type": "object",
+  "required": ["session_id", "work_dir", "created_at", "params", "current_todo", "todos"],
+  "properties": {
+    "session_id": { "type": "string", "description": "会话唯一标识，格式: {task_name}_{YYYYMMDD}_{HHMM}" },
+    "work_dir": { "type": "string", "description": "工作目录绝对路径，形如 workspace/{task_name}_{YYYYMMDD}_{HHMM}" },
+    "created_at": { "type": "string", "format": "date-time", "description": "会话创建时间 ISO 8601" },
+    "updated_at": { "type": "string", "format": "date-time", "description": "最近一次状态更新时间" },
+    "params": {
+      "type": "object",
+      "description": "用户问答参数集合（P0/P6/P7/P8/A4封面标题等）",
+      "properties": {
+        "P0": { "type": "string", "enum": ["深度分析", "轻量分析"], "description": "分析深度" },
+        "P6": { "type": "string", "enum": ["纯网页版", "A4分页版"], "description": "报告格式" },
+        "P7": { "type": "string", "enum": ["标准", "精简", "详尽"], "description": "图表数量级别" },
+        "P8": { "type": "string", "description": "页脚格式" },
+        "A4封面标题": { "type": "string", "description": "A4封面标题（仅P6=A4时）" }
+      },
+      "additionalProperties": true
+    },
+    "current_todo": { "type": "string", "description": "当前正在执行的 TODO ID" },
+    "todos": {
+      "type": "array",
+      "description": "所有 TODO 的运行时状态",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": { "type": "string", "description": "TODO ID，对应 pipeline-todo.json 中的 id" },
+          "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "failed", "skipped"], "description": "TODO 执行状态" },
+          "started_at": { "type": "string", "format": "date-time", "description": "开始执行时间" },
+          "completed_at": { "type": "string", "format": "date-time", "description": "完成时间" },
+          "output": { "type": ["string", "object", "null"], "description": "TODO 产出（用户选择的参数值、脚本 exit code、LLM 输出的摘要等）" },
+          "error": { "type": "string", "description": "执行失败时的错误信息" },
+          "retry_count": { "type": "integer", "minimum": 0, "description": "已重试次数" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "pipeline_status": {
+      "type": "string",
+      "enum": ["running", "paused_user", "paused_error", "completed", "aborted"],
+      "description": "整条管线的运行状态"
+    },
+    "errors": {
+      "type": "array",
+      "description": "全局错误日志（非强制 TODO 的失败记录在此）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "todo_id": { "type": "string" },
+          "error": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "severity": { "type": "string", "enum": ["warn", "error"] }
+        }
+      }
+    },
+    "user_pause_queue": {
+      "type": "array",
+      "description": "标记了 user_pause: true 的 TODO 执行后的暂停点",
+      "items": { "type": "string" }
+    },
+    "llm_context_cache": {
+      "type": "object",
+      "description": "当前会话中已读取的 LLM 上下文缓存（避免重复读取同一个大文件）",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}
