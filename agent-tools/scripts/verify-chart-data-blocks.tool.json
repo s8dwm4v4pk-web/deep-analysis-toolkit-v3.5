@@ -1,0 +1,16 @@
+{
+  "name": "verify-chart-data-blocks",
+  "type": "script",
+  "category": "validation",
+  "description": "校验 blueprint.md 中 chart 的 data-blocks 数据完整性和格式合法性",
+  "invocation": "node agent-tools/scripts/verify-chart-data-blocks.mjs <blueprint.md|analysis-state.md> [--json] [--max-missing=N]",
+  "parameters": {
+    "file_path": { "type": "string", "required": true, "description": "blueprint.md 或 analysis-state.md 路径" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" },
+    "max_missing": { "type": "number", "required": false, "description": "允许的最大缺失数据块数量，默认 0" }
+  },
+  "returns": { "type": "object", "description": "数据块完整性报告" },
+  "exitCodes": { "0": "所有 data-blocks 完整合法", "1": "存在缺失或格式错误的数据块" },
+  "mandatory": false,
+  "stageUsage": ["stage-7a"]
+}
