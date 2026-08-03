@@ -1,0 +1,32 @@
+<!--
+  模板: 折线图 + 标注区间 (line + markArea)
+  引擎: ECharts
+  数据形态: S4 时间序列
+  DOM ID: chart-mark-area
+  说明: 在折线图上标注关键区间（高亮/阴影区域），适合标记异常时段或关键事件窗口
+-->
+(function() {
+  const dom = document.getElementById('chart-mark-area');
+  const myChart = echarts.init(dom);
+  const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const data = [120, 132, 101, 134, 90, 230, 210, 182, 191, 234, 290, 330];
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '14%' },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', boundaryGap: false, data: months },
+    yAxis: { type: 'value', name: '数值' },
+    series: [{
+      type: 'line', data: data, smooth: true,
+      markArea: {
+        silent: true,
+        data: [
+          [{ xAxis: '4月', itemStyle: { color: 'rgba(239,68,68,0.1)' } },
+           { xAxis: '6月', itemStyle: { color: 'rgba(239,68,68,0.1)' } }],
+          [{ xAxis: '9月', itemStyle: { color: 'rgba(34,197,94,0.1)' } },
+           { xAxis: '11月', itemStyle: { color: 'rgba(34,197,94,0.1)' } }]
+        ]
+      }
+    }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
