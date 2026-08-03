@@ -1,0 +1,15 @@
+{
+  "name": "search_file",
+  "type": "platform",
+  "category": "io",
+  "description": "按 glob 模式搜索匹配文件，支持递归目录扫描",
+  "parameters": {
+    "target_directory": { "type": "string", "required": false, "description": "搜索根目录（绝对路径），默认工作区根目录" },
+    "pattern": { "type": "string", "required": true, "description": "文件匹配模式，如 *.js / test*.ts" },
+    "recursive": { "type": "boolean", "required": true, "description": "是否递归搜索子目录" },
+    "caseSensitive": { "type": "boolean", "required": false, "description": "是否区分大小写，默认 false" },
+    "ignore_globs": { "type": "array", "required": false, "description": "忽略模式列表" }
+  },
+  "returns": { "type": "array", "description": "匹配文件的相对路径列表" },
+  "stageUsage": ["all"]
+}
