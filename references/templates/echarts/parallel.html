@@ -1,0 +1,19 @@
+<!--
+  模板: 平行坐标 (parallel coordinates)
+  引擎: ECharts
+  数据形态: S15 高维数据
+  DOM ID: chart-parallel
+  说明: ≥4 个变量，每条折线是一个实体，折线交叉 = 差异
+-->
+(function() {
+  const dom = document.getElementById('chart-parallel');
+  const myChart = echarts.init(dom);
+  const dimensions = ['指标A', '指标B', '指标C', '指标D', '指标E'];
+  const pData = [[80, 60, 90, 70, 50], [50, 85, 70, 90, 40], [30, 40, 50, 20, 80]];
+  myChart.setOption({
+    parallelAxis: dimensions.map((name, i) => ({ dim: i, name: name })),
+    parallel: { left: '8%', right: '15%', bottom: '12%', top: '18%' },
+    series: [{ type: 'parallel', lineStyle: { width: 2 }, data: pData }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
