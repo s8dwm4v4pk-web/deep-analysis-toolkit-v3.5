@@ -1,0 +1,18 @@
+{
+  "name": "validate-chart-checklist",
+  "type": "script",
+  "category": "quality-gate",
+  "description": "基于 checklist 标准验证分析报告中图表覆盖的完整性和方法论合规性",
+  "invocation": "node agent-tools/scripts/validate-chart-checklist.mjs <analysis-state.md> [--p7-standard|--p7-compact|--p7-exhaustive|--min-total=N ...]",
+  "parameters": {
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 路径" },
+    "p7_standard": { "type": "boolean", "required": false, "description": "使用 P7 标准 checklist" },
+    "p7_compact": { "type": "boolean", "required": false, "description": "使用 P7 精简 checklist" },
+    "p7_exhaustive": { "type": "boolean", "required": false, "description": "使用 P7 详尽 checklist" },
+    "min_total": { "type": "number", "required": false, "description": "最小总图表数阈值" }
+  },
+  "returns": { "type": "object", "description": "checklist 校验报告" },
+  "exitCodes": { "0": "所有 checklist 项通过", "1": "存在未通过项" },
+  "mandatory": true,
+  "stageUsage": ["stage-6", "stage-7a"]
+}
