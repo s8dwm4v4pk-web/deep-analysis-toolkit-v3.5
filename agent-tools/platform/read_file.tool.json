@@ -1,0 +1,13 @@
+{
+  "name": "read_file",
+  "type": "platform",
+  "category": "io",
+  "description": "读取本地文件内容，支持指定偏移量和行数限制",
+  "parameters": {
+    "filePath": { "type": "string", "required": true, "description": "要读取的文件绝对路径" },
+    "offset": { "type": "number", "required": false, "description": "起始行号（从文件头部计算）" },
+    "limit": { "type": "number", "required": false, "description": "最大读取行数" }
+  },
+  "returns": { "type": "string", "description": "文件文本内容（含行号前缀）" },
+  "stageUsage": ["all"]
+}
