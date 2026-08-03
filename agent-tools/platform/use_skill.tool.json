@@ -1,0 +1,11 @@
+{
+  "name": "use_skill",
+  "type": "platform",
+  "category": "meta",
+  "description": "加载指定名称的 SKILL 扩展包，获取领域专业知识和工作流",
+  "parameters": {
+    "command": { "type": "string", "required": true, "description": "要加载的 SKILL 名称（无参数），如 pdf / xlsx" }
+  },
+  "returns": { "type": "void", "description": "加载成功后将 SKILL 指令注入当前上下文" },
+  "stageUsage": ["all"]
+}
