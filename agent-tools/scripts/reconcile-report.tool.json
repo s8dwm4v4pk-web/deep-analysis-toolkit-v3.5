@@ -1,0 +1,18 @@
+{
+  "name": "reconcile-report",
+  "type": "script",
+  "category": "validation",
+  "description": "对 CSV/JSON 数据执行总和与子项勾稽校验，确保数据自洽",
+  "invocation": "node agent-tools/scripts/reconcile-report.mjs <data.csv|data.json> [--total-col=NAME] [--sub-cols=A,B,C] [--date-col=NAME] [--json]",
+  "parameters": {
+    "data_path": { "type": "string", "required": true, "description": "数据文件路径" },
+    "total_col": { "type": "string", "required": false, "description": "总计列名称" },
+    "sub_cols": { "type": "string", "required": false, "description": "子列名称列表，逗号分隔" },
+    "date_col": { "type": "string", "required": false, "description": "日期列名称（用于聚合后勾稽）" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" }
+  },
+  "returns": { "type": "object", "description": "勾稽校验报告，含各列差异统计" },
+  "exitCodes": { "0": "勾稽通过，数据总和等于子项之和", "1": "存在差异 → 生成差异报告" },
+  "mandatory": false,
+  "stageUsage": ["stage-1", "stage-6"]
+}
