@@ -1,0 +1,17 @@
+{
+  "name": "match-chart-templates",
+  "type": "script",
+  "category": "mapping",
+  "description": "图表模板智能匹配：读取 classify-data-shape.mjs 输出的数据形态分类，对照 references/methodology/visualization-mapping.md 的映射表，为每条 S 信号推荐最佳 ECharts 图表类型。输出可直接写入 narrative-blueprint.md 的图表清单。",
+  "invocation": "node agent-tools/scripts/match-chart-templates.mjs <data-shape.json> <analysis-state.md> [--output=charts.json] [--json]",
+  "parameters": {
+    "data_shape_path": { "type": "string", "required": true, "description": "classify-data-shape.mjs 的 JSON 输出路径" },
+    "state_path": { "type": "string", "required": true, "description": "analysis-state.md 路径" },
+    "output": { "type": "string", "required": false, "description": "输出图表清单 JSON 路径" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出推荐结果" }
+  },
+  "returns": { "type": "object", "description": "{ recommendations: [{ signal_id, chart_type, echarts_series, data_fields, confidence }] }" },
+  "exitCodes": { "0": "匹配完成", "1": "输入文件缺失或格式错误" },
+  "mandatory": false,
+  "stageUsage": ["stage-6"]
+}
