@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>deep-analysis-toolkit V3.5 — SKILL 架构图</title>
+<style>
+  :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --accent2: #a78bfa; --accent3: #34d399; --text: #e2e8f0; --sub: #94a3b8; --border: #334155; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: "PingFang SC","Microsoft YaHei",sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; min-height: 100vh; }
+  h1 { font-size: 28px; margin-bottom: 6px; letter-spacing: 0.5px; }
+  h1 span { color: var(--accent); }
+  .subtitle { color: var(--sub); font-size: 14px; margin-bottom: 36px; }
+  .diagram { width: 100%; max-width: 1200px; }
+  .row { display: flex; gap: 24px; margin-bottom: 24px; justify-content: center; flex-wrap: wrap; }
+  .layer-label { width: 100%; text-align: center; font-size: 13px; color: var(--sub); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; min-width: 200px; flex: 1; max-width: 360px; position: relative; }
+  .card.root { border-color: var(--accent); border-width: 2px; max-width: 480px; }
+  .card.engine { border-color: var(--accent3); border-width: 2px; }
+  .card.support { border-color: var(--accent2); border-width: 1px; }
+  .card h3 { font-size: 15px; margin-bottom: 8px; }
+  .card.root h3 { color: var(--accent); }
+  .card.engine h3 { color: var(--accent3); }
+  .card.support h3 { color: var(--accent2); }
+  .card ul { list-style: none; font-size: 12px; color: var(--sub); line-height: 1.8; }
+  .card ul li::before { content: "· "; color: var(--sub); }
+  .arrow-down { text-align: center; color: var(--sub); font-size: 20px; margin: 4px 0; }
+  .arrow-row { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .connector { display: flex; flex-direction: column; align-items: center; }
+  .connector .line { width: 1px; height: 24px; background: var(--border); }
+  .connector .line.dashed { background: repeating-linear-gradient(0deg, var(--border) 0 4px, transparent 4px 8px); }
+  .connector .label { font-size: 10px; color: var(--sub); margin: 2px 0; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+  .tag.new { background: rgba(56,189,248,0.15); color: var(--accent); }
+  .tag.core { background: rgba(52,211,153,0.15); color: var(--accent3); }
+  .dual-col { display: flex; gap: 16px; flex-wrap: wrap; }
+  .dual-col .card { flex: 1; min-width: 280px; }
+  .badge { font-size: 11px; background: rgba(167,139,250,0.12); color: var(--accent2); padding: 2px 10px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<h1>deep-analysis-toolkit <span>V3.5</span> — SKILL 架构图</h1>
+<p class="subtitle">双引擎分析体系 · 模块依赖关系 · v3.5.0</p>
+
+<div class="diagram">
+
+  <!-- Layer 1: Root -->
+  <div class="layer-label">━━━ 入口层 ━━━</div>
+  <div class="row">
+    <div class="card root" style="max-width:600px;">
+      <h3>SKILL.md <span class="tag new">根技能（纯路由）</span></h3>
+      <ul>
+        <li>Stage 0 前置问答（P0/P6/P7 + P8/封面，P1-P5 系统默认值）</li>
+        <li>引擎分流（认知循环 / 维度分工）</li>
+        <li>阶段调度：Stage 0 + stages/01 → 07b（10 阶段）</li>
+        <li>双主题 CSS：themes/theme-dark.css / theme-a4.css</li>
+        <li>TODO 编排：pipeline-todo.json（78 个原子 TODO）+ pipeline-state.json</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="connector"><div class="line"></div><span class="label">路由分发</span><div class="line"></div></div>
+  </div>
+
+  <!-- Layer 2: Dual Engines -->
+  <div class="layer-label">━━━ 分析引擎层 ━━━</div>
+  <div class="row">
+    <div class="card engine" style="flex:1.2;">
+      <h3>认知循环引擎 <span class="tag core">stages/</span></h3>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:8px;">适用：中小数据量 · 追求归因深度</div>
+      <ul>
+        <li><b>01</b> 数据基座（D编号 + 5项勾稽 + data_hash）<span class="tag new">V3.4</span></li>
+        <li><b>02</b> 全域扫描（R1）+ 信号筛选（R2）<span class="tag core">合并</span></li>
+        <li><b>03</b> 深度归因（假说穷举+证据检验）<span class="tag core">核心</span></li>
+        <li><b>03b</b> Safety Lifecycle 安全评估<span class="tag new">V3.4</span></li>
+        <li><b>04</b> 情景预判（关键变量→情景空间）</li>
+        <li><b>05</b> 决策建议（4层可追溯）</li>
+        <li><b>06</b> 叙事规划 <span class="tag new">→阶段7连续会话</span></li>
+        <li><b>07a</b> 叙事组装（→ blueprint.md）<span class="tag new">V3.4</span></li>
+        <li><b>07b</b> HTML 报告生成（ECharts 3MB全内联）</li>
+      </ul>
+    </div>
+    <div class="card engine" style="flex:0.8;">
+      <h3>维度分工引擎 <span class="tag core">stages/</span></h3>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:8px;">适用：大数据量 · 多维度并行</div>
+      <ul>
+        <li><b>02-multi-dim</b> 并行扫描<span class="tag new">V3.4</span></li>
+        <li>7维度Scout并行执行</li>
+        <li>Owner汇总+交叉验证</li>
+        <li>借用认知循环 03-05 的归因逻辑</li>
+        <li>→ 接入 06-07 报告生成链</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="connector"><div class="line"></div><span class="label">生成 / 读取交接摘要</span><div class="line"></div></div>
+  </div>
+
+  <!-- Layer 2.5: V3.5 Handoff & Orchestration -->
+  <div class="layer-label">━━━ V3.5 交接与编排层 ━━━</div>
+  <div class="row">
+    <div class="card support" style="max-width:300px;"><h3>阶段交接 <span class="badge">generate-handoff.mjs</span> <span class="tag new">V3.5</span></h3><ul><li>每阶段末尾生成 s{N}-handoff.md</li><li>摘要约 8-12K token</li><li>后续阶段只读摘要即可继续</li></ul></div>
+    <div class="card support" style="max-width:300px;"><h3>状态切片 <span class="badge">state-query.mjs</span> <span class="tag new">V3.5</span></h3><ul><li>--fields / --sections 定向查询</li><li>替代整文件读取</li><li>精确字段零冗余</li></ul></div>
+    <div class="card support" style="max-width:300px;"><h3>TODO 编排 <span class="badge">pipeline-todo.json</span> <span class="tag new">V3.5</span></h3><ul><li>78 个原子 TODO（10 阶段）</li><li>pipeline-state.json 运行时状态</li><li>action_type / quality_gate 字段</li></ul></div>
+    <div class="card support" style="max-width:300px;"><h3>确定性合并 <span class="badge">merge-analysis-state.py</span> <span class="tag new">V3.5</span></h3><ul><li>阶段 5(+3b) 后执行</li><li>s1-s5(+3b) → analysis-state.md</li><li>仅脚本审计用</li></ul></div>
+  </div>
+
+  <div class="row">
+    <div class="connector"><div class="line"></div><span class="label">引用 / 消费</span><div class="line"></div></div>
+  </div>
+
+  <!-- Layer 3: Shared References -->
+  <div class="layer-label">━━━ 共享知识层（references/methodology/）━━━</div>
+  <div class="row">
+    <div class="card support"><h3>七维认知框架</h3><ul><li>量级 / 趋势 / 结构</li><li>异常 / 关联 / 对比 / 边界</li><li>四层递进认知模型</li><li>戒伪精确纪律</li></ul></div>
+    <div class="card support"><h3>分析状态协议</h3><ul><li>中间态读写格式</li><li>追加模式章节定义</li><li>V-xxx / S-xxx 编号体系</li><li>data_hash 文件指纹</li></ul></div>
+    <div class="card support"><h3>收敛规则</h3><ul><li>P1 归因收敛阈值</li><li>P2 情景收敛门槛</li><li>P3 建议层级完整性</li><li>中断0：数据质检门禁</li></ul></div>
+    <div class="card support"><h3>可视化映射</h3><ul><li>17种数据形态</li><li>38种图表选型决策树</li><li>图表最低要求与验收清单</li></ul></div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Layer 4: Templates & Prompts -->
+  <div class="layer-label">━━━ 主题与模板层 ━━━</div>
+  <div class="row">
+    <div class="card support" style="max-width:300px;"><h3>双主题 CSS <span class="tag new">V3.5</span></h3><ul><li>theme-dark.css — 暗色金色主色调</li><li>theme-a4.css — 深蓝封面浅色内页</li><li>组件级预设全覆盖</li></ul></div>
+    <div class="card support" style="flex:2;max-width:600px;"><h3>Stage 文件（15 个 prompt）</h3><ul style="columns:2;">
+      <li>01-data-foundation.md <span class="tag new">+data_hash</span></li>
+      <li>02-cognitive-scan.md <span class="tag core">R1+R2合并</span></li>
+      <li>02-multi-dim-scan.md</li>
+      <li>02-orchestrator.md <span class="tag core">编排器</span></li>
+      <li>02-scout-template.md</li>
+      <li>02-cross-validation.md <span class="tag core">7×7验证</span></li>
+      <li>02-merge-gate.md <span class="tag core">V→S转换</span></li>
+      <li>03-root-cause-reasoning.md</li>
+      <li>03b-safety-lifecycle.md <span class="tag new">V3.4</span></li>
+      <li>04-scenario-predict.md</li>
+      <li>05-decision-advice.md</li>
+      <li>06-narrative-weave.md <span class="tag new">6→7连续</span></li>
+      <li>07a-narrative-assembly.md <span class="tag new">V3.4</span></li>
+      <li>07b-html-generate.md</li>
+      <li>_shared-anchor.md <span class="tag core">共享锚定</span></li>
+    </ul></div>
+  </div>
+  <div class="row">
+    <div class="card support" style="max-width:300px;"><h3>图表模板 <span class="tag new">V3.5</span></h3><ul><li>35个独立模板（5引擎分目录）</li><li>echarts 20 / d3 8 / apexcharts 3</li><li>threejs 3 / chartjs 1</li><li>match-chart-templates.mjs 智能匹配</li></ul></div>
+    <div class="card support" style="max-width:300px;"><h3>Vendor 库 <span class="tag new">V3.5</span></h3><ul><li>echarts.min.js（必读）</li><li>apexcharts / d3 / chart.js（按需）</li><li>全内联，零CDN：references/vendor/</li></ul></div>
+  </div>
+
+  <!-- Layer 5: Quality Gate -->
+  <div class="arrow-down">▼</div>
+  <div class="layer-label">━━━ 质量保障层 ━━━</div>
+  <div class="row">
+    <div class="card support" style="max-width:400px;">
+      <h3>质量闸门 <span class="badge">scripts/verify-report.mjs</span></h3>
+      <ul>
+        <li>报告完整性自动验收</li>
+        <li>图表数量/类型底线检查</li>
+        <li>自包含性验证（无外部依赖）</li>
+        <li>内容基线必备模块核查</li>
+      </ul>
+    </div>
+    <div class="card support" style="max-width:300px;">
+      <h3>文件指纹 <span class="badge">scripts/hash-data.mjs</span> <span class="tag new">V3.4</span></h3>
+      <ul>
+        <li>SHA-256 前8位</li>
+        <li>零依赖标准库</li>
+        <li>全流程数据一致性</li>
+      </ul>
+    </div>
+    <div class="card support" style="max-width:300px;">
+      <h3>门禁与校验 <span class="badge">scripts/</span> <span class="tag new">V3.5</span></h3>
+      <ul>
+        <li>check-convergence.mjs — 收敛门禁</li>
+        <li>validate-blueprint-for-7b.mjs — 蓝图 7 项规则</li>
+        <li>validate-o-v-s-chain.mjs — O→V→S 穿透链</li>
+        <li>共 28 个 .mjs + 27 个 .tool.json</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
