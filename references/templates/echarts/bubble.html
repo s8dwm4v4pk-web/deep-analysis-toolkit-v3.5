@@ -1,0 +1,36 @@
+<!--
+  模板: 气泡图 (bubble)
+  引擎: ECharts
+  数据形态: S9 三变量关系
+  DOM ID: chart-bubble
+  说明: X/Y + 气泡大小 = Z，三个连续变量同图展示，适合探索多变量关联模式
+-->
+(function() {
+  const dom = document.getElementById('chart-bubble');
+  const myChart = echarts.init(dom);
+  // 数据格式: [[x, y, size, label], ...]
+  const bubbleData = [
+    [31, 72, 85, 'A'], [45, 55, 40, 'B'], [22, 38, 65, 'C'],
+    [58, 82, 55, 'D'], [15, 25, 30, 'E'], [38, 60, 90, 'F'],
+    [52, 45, 50, 'G'], [28, 70, 75, 'H']
+  ];
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '12%' },
+    tooltip: {
+      formatter: p => {
+        const d = p.data;
+        return d[3] + '<br/>X: ' + d[0] + '<br/>Y: ' + d[1] + '<br/>Z: ' + d[2];
+      }
+    },
+    xAxis: { type: 'value', name: 'X 轴' },
+    yAxis: { type: 'value', name: 'Y 轴' },
+    series: [{
+      type: 'scatter', data: bubbleData,
+      symbolSize: data => Math.sqrt(data[2]) * 2.5,
+      label: { show: true, formatter: p => p.data[3], position: 'top' },
+      itemStyle: { color: '#3b82f6', opacity: 0.6 },
+      emphasis: { focus: 'series', label: { show: true, fontSize: 14 } }
+    }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
