@@ -1,0 +1,36 @@
+<!--
+  模板: K 线图 (candlestick)
+  引擎: ApexCharts
+  数据形态: S4 时间序列（金融 OHLC）
+  DOM ID: chart-candlestick
+  说明: 展示开盘/最高/最低/收盘价，需 OHLC 四元组时序数据
+  前置: HTML 需内联 apexcharts.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-candlestick');
+  const options = {
+    chart: { type: 'candlestick', height: 400 },
+    series: [{
+      name: 'K线',
+      data: [
+        { x: new Date('2026-01-04'), y: [100, 108, 98, 105] },
+        { x: new Date('2026-01-05'), y: [105, 112, 103, 110] },
+        { x: new Date('2026-01-06'), y: [110, 115, 107, 108] },
+        { x: new Date('2026-01-07'), y: [108, 109, 95, 98] },
+        { x: new Date('2026-01-08'), y: [98, 106, 96, 104] },
+        { x: new Date('2026-01-11'), y: [104, 110, 102, 107] },
+        { x: new Date('2026-01-12'), y: [107, 118, 105, 116] }
+      ]
+    }],
+    xaxis: { type: 'datetime' },
+    yaxis: { tooltip: { enabled: true } },
+    plotOptions: {
+      candlestick: {
+        colors: { upward: '#22c55e', downward: '#ef4444' }
+      }
+    }
+  };
+  const chart = new ApexCharts(dom, options);
+  chart.render();
+  window.addEventListener('resize', () => chart.render());
+})();
