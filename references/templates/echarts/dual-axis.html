@@ -1,0 +1,20 @@
+<!--
+  模板: 双 Y 轴（柱状图 + 折线）(dual axis)
+  引擎: ECharts
+  数据形态: S2 不同量纲
+  DOM ID: chart-dual-axis
+  说明: 两个量纲不同的指标共享 X 轴，分别映射到左右 Y 轴
+-->
+(function() {
+  const dom = document.getElementById('chart-dual-axis');
+  const myChart = echarts.init(dom);
+  const categories = ['A', 'B', 'C', 'D', 'E'], barData = [31, 33, 14, 35, 41], lineData = [723, 737, 602, 994, 966];
+  myChart.setOption({
+    grid: { left: '12%', right: '14%', top: '10%', bottom: '16%' },
+    tooltip: { trigger: 'axis' }, legend: { data: ['矿次', '罚款(万元)'], bottom: 0 },
+    xAxis: { type: 'category', data: categories },
+    yAxis: [{ type: 'value', name: '矿次' }, { type: 'value', name: '万元' }],
+    series: [{ name: '矿次', type: 'bar', data: barData }, { name: '罚款(万元)', type: 'line', yAxisIndex: 1, data: lineData }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
