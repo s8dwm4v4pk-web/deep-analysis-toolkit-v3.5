@@ -1,0 +1,26 @@
+<!--
+  模板: 径向柱图 (radial bar)
+  引擎: ApexCharts
+  数据形态: S3 极简 / S8 分级阈值
+  DOM ID: chart-radial-bar
+  说明: 多个进度值并排对比（≤ 6 个），圆环布局，适合仪表盘风格的并列指标展示
+  前置: HTML 需内联 apexcharts.min.js
+-->
+(function() {
+  const dom = document.getElementById('chart-radial-bar');
+  const options = {
+    chart: { type: 'radialBar', height: 400 },
+    series: [78, 65, 92, 45],
+    labels: ['指标A', '指标B', '指标C', '指标D'],
+    colors: ['#3b82f6', '#f59e0b', '#22c55e', '#ef4444'],
+    plotOptions: {
+      radialBar: {
+        dataLabels: { name: { fontSize: '14px' }, value: { fontSize: '16px', formatter: v => v + '%' } },
+        track: { background: '#e2e8f0' }
+      }
+    }
+  };
+  const chart = new ApexCharts(dom, options);
+  chart.render();
+  window.addEventListener('resize', () => chart.render());
+})();
