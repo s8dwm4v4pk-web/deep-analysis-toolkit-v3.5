@@ -1,0 +1,17 @@
+{
+  "name": "validate-chart-dom",
+  "type": "script",
+  "category": "post-processing",
+  "description": "后处理管线首步（5A-0）：校验 HTML 报告中所有图表 DOM 结构完整性——容器元素存在性、chart_id 唯一性、canvas/div 标签闭合、容器尺寸合法性",
+  "invocation": "node agent-tools/scripts/validate-chart-dom.mjs <input.html> [output.html] [--fix] [--json]",
+  "parameters": {
+    "input_path": { "type": "string", "required": true, "description": "输入 HTML 路径" },
+    "output_path": { "type": "string", "required": false, "description": "修复后输出路径（仅在 --fix 时写入）" },
+    "fix": { "type": "boolean", "required": false, "description": "自动修复 DOM 问题（仅限安全修复，不改变结构语义）" },
+    "json": { "type": "boolean", "required": false, "description": "以 JSON 格式输出" }
+  },
+  "returns": { "type": "object", "description": "{ passed: boolean, issues: [{ container_id, problem, severity }] }" },
+  "exitCodes": { "0": "所有图表 DOM 校验通过", "1": "存在图表 DOM 结构问题" },
+  "mandatory": true,
+  "stageUsage": ["stage-7b"]
+}
