@@ -1,0 +1,22 @@
+<!--
+  模板: 日历热力图 (calendar heatmap)
+  引擎: ECharts
+  数据形态: S12 多维时序矩阵
+  DOM ID: chart-calendar
+  说明: 时间序列日粒度模式，需连续日期数据，跨度 ≥ 2 周才有意义
+-->
+(function() {
+  const dom = document.getElementById('chart-calendar');
+  const myChart = echarts.init(dom);
+  const calData = [], startDate = new Date('2026-01-01');
+  for (let i = 0; i < 180; i++) {
+    const d = new Date(startDate.getTime() + i * 86400000);
+    calData.push([d.toISOString().split('T')[0], Math.random() * 100]);
+  }
+  myChart.setOption({
+    tooltip: {}, visualMap: { min: 0, max: 100, type: 'piecewise', orient: 'horizontal', left: 'center', top: 0 },
+    calendar: { top: 80, left: 30, right: 30, cellSize: ['auto', 15], range: '2026', dayLabel: { firstDay: 1 }, monthLabel: {} },
+    series: [{ type: 'heatmap', coordinateSystem: 'calendar', data: calData }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
