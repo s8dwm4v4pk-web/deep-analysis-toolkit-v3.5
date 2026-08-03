@@ -1,0 +1,396 @@
+/* ============================================================
+   theme-dark.css — 纯网页版暗色主题
+   基于用户精选报告提炼，保留高辨识度设计语言
+   使用场景: 连续滚动、暗色背景、适合屏幕阅读
+   配套: 根 SKILL.md 参数 P6="纯网页版"
+   ============================================================ */
+
+/* ---- 全局重置 ---- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-deep:#0a0e17;
+  --bg-panel:#111620;
+  --bg-card:#161c28;
+  --bg-hover:#1c2333;
+  --gold:#d4a853;
+  --gold-light:#f0d78c;
+  --red:#e74c3c;
+  --red-light:#ff6b6b;
+  --blue:#4a9eff;
+  --green:#2ecc71;
+  --orange:#f39c12;
+  --purple:#9b59b6;
+  --cyan:#00d2d3;
+  --text:#e0e4ea;
+  --text-dim:#7f8c9a;
+  --border:#232a38;
+  --grad-gold:linear-gradient(180deg,#f0d78c 0%,#d4a853 100%);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',-apple-system,sans-serif;
+  background:var(--bg-deep);color:var(--text);line-height:1.85;font-size:15px;
+  min-height:100vh;
+}
+
+/* ---- 自定义滚动条 ---- */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg-deep)}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+/* ============================================================
+   COVER — 封面
+   ============================================================ */
+.cover{
+  background:linear-gradient(160deg,#0a0e17 0%,#0d1528 30%,#111b33 60%,#0f1625 100%);
+  color:#fff;text-align:center;padding:100px 48px 80px;
+  position:relative;overflow:hidden;
+  border-bottom:1px solid #1e2a40;
+}
+.cover::before{
+  content:'';
+  position:absolute;top:-30%;left:-30%;width:160%;height:160%;
+  background:
+    radial-gradient(ellipse at 25% 60%,rgba(212,168,83,.06) 0%,transparent 55%),
+    radial-gradient(ellipse at 75% 30%,rgba(74,158,255,.05) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 80%,rgba(231,76,60,.04) 0%,transparent 50%);
+  animation:coverDrift 12s ease-in-out infinite;
+}
+@keyframes coverDrift{0%,100%{opacity:.7}50%{opacity:1}}
+.cover>*{position:relative;z-index:1}
+
+.cover .tag{
+  display:inline-block;padding:6px 20px;
+  border:1px solid rgba(212,168,83,.4);border-radius:20px;
+  font-size:12px;letter-spacing:4px;color:var(--gold);
+  margin-bottom:24px;text-transform:uppercase;
+}
+.cover h1{
+  font-family:'Noto Serif SC','SimSun',serif;
+  font-size:44px;font-weight:700;letter-spacing:4px;
+  margin-bottom:16px;
+  background:var(--grad-gold);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.cover .subtitle{font-size:18px;font-weight:300;opacity:.7;margin-bottom:8px}
+.cover .org{font-size:15px;opacity:.5;margin-top:32px;letter-spacing:2px}
+.cover .divider{width:80px;height:2px;background:var(--gold);margin:24px auto;border-radius:1px}
+.cover .meta-row{
+  display:flex;justify-content:center;gap:40px;
+  font-size:13px;opacity:.45;margin-top:16px;
+}
+
+/* ============================================================
+   KPI STATS BANNER — 核心指标卡片
+   ============================================================ */
+.stats-banner{
+  max-width:1400px;margin:-30px auto 40px;padding:0 32px;
+  position:relative;z-index:3;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.stat-card{
+  background:var(--bg-card);border-radius:12px;padding:24px 20px;
+  text-align:center;border:1px solid var(--border);
+  transition:all .3s;
+}
+.stat-card:hover{border-color:rgba(212,168,83,.3);transform:translateY(-3px)}
+.stat-card .num{font-size:38px;font-weight:900;letter-spacing:-2px;line-height:1.1}
+.num.gold{color:var(--gold)}
+.num.red{color:var(--red-light)}
+.num.blue{color:var(--blue)}
+.num.green{color:var(--green)}
+.num.cyan{color:var(--cyan)}
+.stat-card .label{font-size:12px;color:var(--text-dim);margin-top:6px}
+.stat-card .delta{font-size:11px;margin-top:4px}
+.delta.up{color:var(--red-light)}
+.delta.down{color:var(--green)}
+.delta.flat{color:var(--text-dim)}
+.stat-card .d-ref{font-size:10px;color:var(--text-dim);margin-top:4px;opacity:.6}
+
+/* ============================================================
+   MAIN CONTENT — 主内容区
+   ============================================================ */
+.content{max-width:1400px;margin:0 auto;padding:0 32px 60px}
+
+/* ---- 章节面板 ---- */
+.section{
+  background:var(--bg-panel);border-radius:16px;padding:44px 40px;
+  margin-bottom:28px;border:1px solid var(--border);
+}
+.section h2{
+  font-family:'Noto Serif SC','SimSun',serif;
+  font-size:28px;font-weight:700;color:var(--gold);
+  margin-bottom:8px;padding-bottom:14px;
+  border-bottom:1px solid rgba(212,168,83,.15);
+}
+.section h3{font-size:20px;font-weight:600;color:#fff;margin:32px 0 14px}
+.section h4{font-size:16px;font-weight:600;color:var(--text);margin:18px 0 10px}
+.section .lead{font-size:16px;color:var(--text-dim);margin-bottom:24px;font-style:italic;line-height:1.7}
+.section p{text-align:justify;margin-bottom:14px;color:var(--text);line-height:1.9;text-indent:2em}
+.section p.noid{text-indent:0}
+.section strong{color:#fff}
+
+/* ---- 高亮标注 ---- */
+.highlight{background:linear-gradient(180deg,transparent 55%,rgba(212,168,83,.2) 55%)}
+
+/* ---- 徽章系统 ---- */
+.badge{display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;margin:0 2px}
+.badge.red{background:rgba(231,76,60,.15);color:var(--red-light);border:1px solid rgba(231,76,60,.3)}
+.badge.yellow{background:rgba(243,156,18,.15);color:var(--orange);border:1px solid rgba(243,156,18,.3)}
+.badge.green{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.3)}
+.badge.blue{background:rgba(74,158,255,.12);color:var(--blue);border:1px solid rgba(74,158,255,.3)}
+.badge.purple{background:rgba(155,89,182,.12);color:var(--purple);border:1px solid rgba(155,89,182,.3)}
+
+/* ---- 引用块 ---- */
+blockquote{
+  border-left:3px solid var(--gold);
+  background:rgba(212,168,83,.05);
+  margin:20px 0;padding:16px 20px;
+  border-radius:0 8px 8px 0;
+  font-size:14px;color:var(--text-dim);
+}
+blockquote strong{color:var(--gold-light)}
+
+/* ============================================================
+   表格
+   ============================================================ */
+table{
+  width:100%;border-collapse:collapse;
+  margin:18px 0;font-size:13px;
+}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border)}
+th{
+  background:rgba(22,28,40,.8);font-weight:600;
+  color:var(--gold);font-size:12px;letter-spacing:.5px;
+}
+tr:hover{background:rgba(212,168,83,.03)}
+td .flag-red{color:var(--red-light);font-weight:600}
+td .flag-green{color:var(--green);font-weight:600}
+td .flag-amber{color:var(--orange);font-weight:600}
+
+/* ---- 建议层级表格 ---- */
+.rec-table .urgent td{background:rgba(231,76,60,.07)}
+.rec-table .shortterm td{background:rgba(243,156,18,.05)}
+.rec-table .midterm td{background:rgba(46,204,113,.04)}
+.rec-table .structural td{background:rgba(74,158,255,.04)}
+
+/* ============================================================
+   归因链
+   ============================================================ */
+.cause-chain{
+  background:rgba(17,22,32,.8);border-radius:10px;
+  padding:22px;font-family:'Courier New','Noto Sans SC',monospace;
+  font-size:13px;line-height:2.2;margin:18px 0;
+  border:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.cause-chain::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--purple),var(--orange),var(--red-light));
+}
+.c-struct{color:var(--purple);font-weight:600}
+.c-far{color:var(--orange);font-weight:600}
+.c-near{color:var(--red-light);font-weight:600}
+.c-arrow{color:var(--gold);font-size:16px}
+
+/* ============================================================
+   图表容器
+   ============================================================ */
+.chart-wrap{width:100%;height:440px;margin:28px 0;overflow:visible}
+.chart-wrap.tall{height:540px}
+.chart-wrap.short{height:340px}
+.chart-wrap.xs{height:240px}
+[id^="chart-"]{overflow:visible}
+.chart-caption{
+  text-align:center;font-size:12px;color:var(--text-dim);
+  margin-top:-18px;margin-bottom:20px;font-style:italic;
+}
+
+/* ============================================================
+   情景卡片
+   ============================================================ */
+.scenario-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;margin:16px 0;
+}
+.scenario-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;padding:20px;
+}
+.scenario-card h4{font-size:16px;color:var(--blue);margin:0 0 8px}
+.scenario-card .confidence{
+  display:inline-block;padding:2px 10px;border-radius:12px;
+  font-size:12px;font-weight:600;margin-bottom:10px;
+}
+.scenario-card .confidence.high{background:rgba(46,204,113,.15);color:var(--green)}
+.scenario-card .confidence.medium{background:rgba(243,156,18,.15);color:var(--orange)}
+.scenario-card .confidence.low{background:rgba(231,76,60,.15);color:var(--red-light)}
+.scenario-card p{font-size:14px;color:var(--text-dim);line-height:1.7;text-indent:0}
+
+/* ============================================================
+   建议卡片
+   ============================================================ */
+.advice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.advice-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;padding:20px;border-left:4px solid var(--blue);
+}
+.advice-card.urgent{border-left-color:var(--red)}
+.advice-card.short{border-left-color:var(--orange)}
+.advice-card.mid{border-left-color:var(--green)}
+.advice-card.structural{border-left-color:var(--purple)}
+.advice-card .advice-header{
+  font-size:14px;font-weight:700;margin-bottom:8px;color:#fff;
+}
+.advice-card .advice-body{font-size:14px;color:var(--text-dim);line-height:1.7}
+.advice-card .advice-trace{font-size:11px;color:var(--text-dim);margin-top:8px;opacity:.6}
+
+/* ============================================================
+   预警盒子
+   ============================================================ */
+.alert-box{
+  border:1px solid rgba(231,76,60,.3);
+  background:rgba(231,76,60,.05);
+  border-radius:10px;padding:20px 24px;margin:20px 0;
+}
+.alert-box h4{color:var(--red-light);margin-top:0}
+.alert-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 0;border-bottom:1px solid rgba(231,76,60,.08);
+}
+.alert-item:last-child{border-bottom:none}
+.alert-rank{font-size:20px;color:var(--red-light);font-weight:900;min-width:30px}
+
+/* ============================================================
+   Callout 信息框
+   ============================================================ */
+.callout{
+  background:var(--bg-card);border-left:4px solid var(--blue);
+  padding:14px 18px;margin:16px 0;border-radius:0 8px 8px 0;
+  font-size:14px;color:var(--text-dim);text-indent:0;
+}
+.callout.red{background:rgba(231,76,60,.05);border-left-color:var(--red)}
+.callout.amber{background:rgba(243,156,18,.04);border-left-color:var(--orange)}
+.callout.green{background:rgba(46,204,113,.04);border-left-color:var(--green)}
+
+/* ============================================================
+   信号溯源标记
+   ============================================================ */
+.signal-ref{
+  font-size:11px;color:var(--text-dim);
+  background:rgba(212,168,83,.08);
+  padding:2px 8px;border-radius:4px;
+  display:inline-block;margin-left:4px;
+}
+
+/* ============================================================
+   局限性声明
+   ============================================================ */
+.limitations{
+  border:1px solid rgba(243,156,18,.25);
+  background:rgba(243,156,18,.04);
+  border-radius:10px;padding:24px;margin-top:20px;
+}
+.limitations h3{color:var(--orange)!important;margin-top:0}
+.limitations ul{padding-left:20px;color:var(--text-dim)}
+.limitations li{margin-bottom:8px;font-size:13px}
+
+/* ============================================================
+   页脚
+   ============================================================ */
+footer{
+  text-align:center;padding:32px;
+  font-size:11px;color:var(--text-dim);
+  border-top:1px solid var(--border);
+  line-height:1.8;
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media(max-width:1024px){
+  .stats-banner{grid-template-columns:repeat(2,1fr)}
+  .section{padding:28px 20px}
+  .cover h1{font-size:30px}
+  .advice-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .stats-banner{grid-template-columns:1fr}
+  .cover h1{font-size:24px}
+  .section h2{font-size:22px}
+}
+
+/* ============================================================
+   打印降级
+   ============================================================ */
+@media print{
+  body{background:#fff;color:#222}
+  .cover{background:#1a1a2e}
+  .section{break-inside:avoid;background:#fff;border:1px solid #ddd}
+}
+
+/* ============================================================
+   假说验证表格
+   ============================================================ */
+.hypothesis-table{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;padding:20px 24px;margin:20px 0;
+}
+.hypothesis-table h3{color:var(--gold);margin-top:0}
+.hypothesis-table .hypothesis-trace{
+  font-size:11px;color:var(--text-dim);margin-bottom:16px;
+  padding:4px 10px;background:rgba(212,168,83,.06);
+  border-radius:4px;display:inline-block;
+}
+.hypothesis-table table{width:100%;border-collapse:collapse;font-size:13px}
+.hypothesis-table th{
+  text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);
+  color:var(--text-dim);font-weight:600;text-transform:uppercase;font-size:11px;
+  letter-spacing:.5px;
+}
+.hypothesis-table td{padding:10px 12px;border-bottom:1px solid rgba(35,42,56,.5);color:var(--text)}
+.hypothesis-table tr.supported td:first-child{border-left:3px solid var(--green)}
+.hypothesis-table tr.partial td:first-child{border-left:3px solid var(--orange)}
+.hypothesis-table tr.refuted td:first-child{border-left:3px solid var(--red)}
+.hypothesis-table tr.uncertain td:first-child{border-left:3px solid var(--text-dim)}
+.hypothesis-table .status-badge{
+  display:inline-block;padding:2px 10px;border-radius:12px;
+  font-size:11px;font-weight:700;
+}
+.hypothesis-table .status-badge.supported{background:rgba(46,204,113,.15);color:var(--green)}
+.hypothesis-table .status-badge.partial{background:rgba(243,156,18,.15);color:var(--orange)}
+.hypothesis-table .status-badge.refuted{background:rgba(231,76,60,.15);color:var(--red-light)}
+.hypothesis-table .status-badge.uncertain{background:rgba(127,140,154,.15);color:var(--text-dim)}
+
+/* ============================================================
+   Safety Lifecycle 阶段面板
+   ============================================================ */
+.lifecycle-stage{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;padding:24px;margin:20px 0;
+}
+.lifecycle-stage .stage-badge{
+  display:inline-block;padding:4px 16px;border-radius:20px;
+  font-size:14px;font-weight:800;letter-spacing:1px;
+  background:var(--grad-gold);color:var(--bg-deep);
+}
+.lifecycle-stage .stage-metrics{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+  margin:16px 0;
+}
+.lifecycle-stage .stage-metric{
+  text-align:center;padding:12px 8px;background:rgba(22,28,40,.6);
+  border-radius:8px;
+}
+.lifecycle-stage .stage-metric .metric-score{font-size:24px;font-weight:900;color:var(--gold)}
+.lifecycle-stage .stage-metric .metric-label{font-size:10px;color:var(--text-dim);margin-top:4px}
+.lifecycle-stage .vulnerability-list{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;
+}
+.lifecycle-stage .vulnerability-item{
+  padding:8px 12px;background:rgba(231,76,60,.06);
+  border-left:3px solid var(--red);border-radius:0 4px 4px 0;
+  font-size:12px;color:var(--text-dim);
+}
