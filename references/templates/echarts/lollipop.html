@@ -1,0 +1,24 @@
+<!--
+  模板: 棒棒糖图 (lollipop)
+  引擎: ECharts
+  数据形态: S1 一维数组 / S7 排名序列
+  DOM ID: chart-lollipop
+  说明: 视觉焦点从柱子面积转移到端点位置，减少视觉冗余，适合 N ≥ 8 的排名
+-->
+(function() {
+  const dom = document.getElementById('chart-lollipop');
+  const myChart = echarts.init(dom);
+  const categories = ['项目A', '项目B', '项目C', '项目D', '项目E', '项目F', '项目G', '项目H'];
+  const values = [85, 72, 63, 58, 45, 38, 29, 15];
+  myChart.setOption({
+    grid: { left: '18%', right: '8%', top: '8%', bottom: '10%' },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'value', name: '数值' },
+    yAxis: { type: 'category', data: categories, inverse: true },
+    series: [
+      { type: 'bar', data: values.map(v => v * 0.02), barWidth: 4, itemStyle: { color: '#94a3b8' } },
+      { type: 'scatter', data: values, symbolSize: 16, itemStyle: { color: '#3b82f6' } }
+    ]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
