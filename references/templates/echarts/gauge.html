@@ -1,0 +1,24 @@
+<!--
+  模板: 仪表盘 (gauge)
+  引擎: ECharts
+  数据形态: S8 分级/阈值
+  DOM ID: chart-gauge
+  说明: 单指标 vs 目标/阈值，适合 KPI 监控，避免多值堆砌
+  🔴 铁律：gauge 系列不支持 markLine / markArea / markPoint。
+     这些标注组件仅适用于笛卡尔坐标系（bar/line/scatter），
+     写在 gauge series 中会导致 setOption() 报错、整图不显示。
+     若需要标注阈值线，应用 axisLine.lineStyle.color 分段色条实现。
+-->
+(function() {
+  const dom = document.getElementById('chart-gauge');
+  if (!dom) return;
+  const myChart = echarts.init(dom);
+  myChart.setOption({
+    series: [{ type: 'gauge', startAngle: 210, endAngle: -30, min: 0, max: 100,
+      progress: { show: true, width: 18 },
+      axisLine: { lineStyle: { width: 18, color: [[0.3, '#ef4444'], [0.7, '#f59e0b'], [1, '#22c55e']] } },
+      detail: { valueAnimation: true, formatter: '{value}分', fontSize: 24, offsetCenter: [0, '70%'] },
+      data: [{ value: 68, name: '综合评分' }] }]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
