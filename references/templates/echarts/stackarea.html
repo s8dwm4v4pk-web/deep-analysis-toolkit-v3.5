@@ -1,0 +1,25 @@
+<!--
+  模板: 堆叠面积图 (stacked area)
+  引擎: ECharts
+  数据形态: S4 多指标时序
+  DOM ID: chart-stackarea
+  说明: 展示多指标构成随时间变化的趋势和比例，适合总量+构成双重叙事
+-->
+(function() {
+  const dom = document.getElementById('chart-stackarea');
+  const myChart = echarts.init(dom);
+  const months = ['1月', '2月', '3月', '4月', '5月', '6月'];
+  myChart.setOption({
+    grid: { left: '12%', right: '8%', top: '10%', bottom: '16%' },
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['指标A', '指标B', '指标C'], bottom: 0 },
+    xAxis: { type: 'category', boundaryGap: false, data: months },
+    yAxis: { type: 'value' },
+    series: [
+      { name: '指标A', type: 'line', stack: 'total', areaStyle: { opacity: 0.6 }, data: [120, 132, 101, 134, 90, 230], color: '#3b82f6' },
+      { name: '指标B', type: 'line', stack: 'total', areaStyle: { opacity: 0.6 }, data: [220, 182, 191, 234, 290, 330], color: '#22c55e' },
+      { name: '指标C', type: 'line', stack: 'total', areaStyle: { opacity: 0.6 }, data: [150, 232, 201, 154, 190, 250], color: '#f59e0b' }
+    ]
+  });
+  window.addEventListener('resize', () => myChart.resize());
+})();
